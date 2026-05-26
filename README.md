@@ -16,7 +16,7 @@ O sistema permite o controle completo das operações de campo de um provedor de
 
 ## Tecnologias
 
-- **Backend:** Spring Boot
+- **Backend:** Java 25, Spring Boot 3
 - **Frontend:** React
 - **Banco de dados:** PostgreSQL
 - **Infraestrutura:** Docker
