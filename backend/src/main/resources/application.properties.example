@@ -1,0 +1,15 @@
+# Conexão com o banco
+spring.datasource.url=jdbc:postgresql://localhost:5432/trackfibra
+spring.datasource.username=seu_usuario
+spring.datasource.password=sua_senha
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# JPA
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+
+# Flyway
+spring.flyway.enabled=true
+spring.flyway.locations=classpath:db/migration
