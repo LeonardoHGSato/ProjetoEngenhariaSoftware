@@ -22,20 +22,22 @@ public class FuncionarioModel {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id; //somente para o banco de dados
 
-    @Column(nullable = false)
+    @Column(name = "nome", nullable = false)
     private String nome;
-    @Column(unique = true, nullable = false)
+    @Column(name = "email", unique = true, nullable = false)
     private String email;
-    @Column(nullable = false)
+    @Column(name = "senha", nullable = false)
     private String senha;
 
-    @Column(nullable = false)
-    private String numeroTelefone; //ou somente numeros?
-    @Column(unique = true, nullable = false)
-    private String cpf; //ou somente os numeros tambem?
+    @Column(name = "numero_telefone", nullable = false)
+    private String numeroTelefone; //usamos somente os numeros
+    @Column(name = "cpf", unique = true, nullable = false)
+    private String cpf; //usamos somente os numeros
 
-    @Column(nullable = false)
+    @Column(name = "status", nullable = false)
+    @Enumerated(EnumType.STRING)
     private StatusFuncionario statusFuncionario;
-    @Column(nullable = false)
+    @Column(name = "perfil", nullable = false)
+    @Enumerated(EnumType.STRING)
     private PerfilFuncionario perfilFuncionario;
 }
