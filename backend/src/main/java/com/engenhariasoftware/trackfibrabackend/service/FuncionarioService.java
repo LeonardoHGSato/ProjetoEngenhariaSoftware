@@ -4,16 +4,19 @@ import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioRequestDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioResponseDTO;
 import com.engenhariasoftware.trackfibrabackend.model.FuncionarioModel;
 import com.engenhariasoftware.trackfibrabackend.repository.FuncionarioRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 @Service
 public class FuncionarioService {
 //    Declaracao do atributo
     private final FuncionarioRepository funcionarioRepository;
+    private final PasswordEncoder passwordEncoder;
 
 //    O construtor aqui serve para fazer uma injecao de dependencias. Assim, o spring entrega um repository pronto ao invés de criar um com o new
-    public FuncionarioService(FuncionarioRepository funcionarioRepository) {
+    public FuncionarioService(FuncionarioRepository funcionarioRepository, PasswordEncoder passwordEncoder) {
         this.funcionarioRepository = funcionarioRepository;
+        this.passwordEncoder = passwordEncoder;
     }
 
     public FuncionarioResponseDTO cadastrarFuncionario(FuncionarioRequestDTO requestDTO){
@@ -29,7 +32,7 @@ public class FuncionarioService {
 //      Para depois inserir os elementos vindos do FuncionarioRequesDTO pelos setters.
         funcionarioNovo.setNome(requestDTO.getNome());
         funcionarioNovo.setEmail(requestDTO.getEmail());
-        funcionarioNovo.setSenha(requestDTO.getSenha());
+        funcionarioNovo.setSenha(passwordEncoder.encode(requestDTO.getSenha()));
         funcionarioNovo.setNumeroTelefone(requestDTO.getNumeroTelefone());
         funcionarioNovo.setCpf(requestDTO.getCpf());
 
