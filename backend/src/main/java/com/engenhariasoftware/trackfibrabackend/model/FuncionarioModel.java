@@ -10,7 +10,6 @@ import lombok.Setter;
 
 //Construtores, Setters e Getters com lombok
 @NoArgsConstructor
-@AllArgsConstructor
 @Getter
 @Setter
 
@@ -36,8 +35,9 @@ public class FuncionarioModel {
 
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
-    private StatusFuncionario statusFuncionario;
+    private StatusFuncionario statusFuncionario = StatusFuncionario.ATIVO;
+
     @Column(name = "perfil", nullable = false)
     @Enumerated(EnumType.STRING)
-    private PerfilFuncionario perfilFuncionario;
+    private PerfilFuncionario perfilFuncionario = PerfilFuncionario.TECNICO;
 }
