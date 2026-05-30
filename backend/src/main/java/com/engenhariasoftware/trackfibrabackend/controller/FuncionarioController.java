@@ -1,5 +1,6 @@
 package com.engenhariasoftware.trackfibrabackend.controller;
 
+import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioEdicaoDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioListagemDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioRequestDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioResponseDTO;
@@ -40,5 +41,16 @@ public class FuncionarioController {
             @RequestParam(required = false) String nome, @RequestParam(required = false) StatusFuncionario status, Pageable pageable){
 
         return ResponseEntity.ok(funcionarioService.listarFuncionarios(nome, status, pageable));
+    }
+
+//Define que o metodo representa requisicoes PUT. O {id} na URL indica qual funcionario sera editado
+    @PutMapping("/{id}")
+    //    PathVariable captura o id diretamente da URL (ex: /api/v1/funcionarios/3 -> id = 3)
+    //    RequestBody recebe o json com os novos dados e transforma em FuncionarioEdicaoDTO
+    public ResponseEntity<FuncionarioResponseDTO> editarFuncionario(@PathVariable Long id, @RequestBody FuncionarioEdicaoDTO edicaoDTO) {
+//        Chama o service passando o id do funcionario e os novos dados
+        FuncionarioResponseDTO alteracaoDTO = funcionarioService.editarFuncionario(id, edicaoDTO);
+//          Retorna 200 OK com os dados atualizados do funcionario
+        return ResponseEntity.ok().body(alteracaoDTO);
     }
 }

@@ -1,5 +1,6 @@
 package com.engenhariasoftware.trackfibrabackend.service;
 
+import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioEdicaoDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioListagemDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioRequestDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioResponseDTO;
@@ -68,5 +69,29 @@ public class FuncionarioService {
                 funcionario.getNumeroTelefone(),
                 funcionario.getStatusFuncionario()
         ));
+    }
+
+//    Valida se o existe funcionario com aquele id e se ja existe alguem com o mesmo email. Depois, envia as alteracoes para o banco de dados
+    public FuncionarioResponseDTO editarFuncionario(Long id, FuncionarioEdicaoDTO edicaoDTO){
+        if(!funcionarioRepository.existsById(id)){
+            throw new RuntimeException("Não há nenhum funcionario cadastrado com esse id");
+        }
+        if(funcionarioRepository.existsByEmailAndIdNot(edicaoDTO.getEmail(), id)){
+            throw new RuntimeException("Já há outro funcionario cadastrado com esse email");
+        }
+
+//define a varivel que recebe os dados a do funcinoario que tera alguma alteracao
+        FuncionarioModel funcionarioAlterado = funcionarioRepository.findById(id).get();
+//Altera os dados do funcionario
+        funcionarioAlterado.setNome(edicaoDTO.getNome());
+        funcionarioAlterado.setEmail(edicaoDTO.getEmail());
+        funcionarioAlterado.setNumeroTelefone(edicaoDTO.getNumeroTelefone());
+        funcionarioAlterado.setStatusFuncionario(edicaoDTO.getStatusFuncionario());
+        funcionarioAlterado.setPerfilFuncionario(edicaoDTO.getPerfilFuncionario());
+//        Altera os dados no banco de dados
+        funcionarioRepository.save(funcionarioAlterado);
+//Envia os dados alterados para o front
+        FuncionarioResponseDTO alteracoesDTO = new FuncionarioResponseDTO(funcionarioAlterado.getNome(), funcionarioAlterado.getEmail(), funcionarioAlterado.getNumeroTelefone(), funcionarioAlterado.getStatusFuncionario(), funcionarioAlterado.getPerfilFuncionario());
+        return alteracoesDTO;
     }
 }
