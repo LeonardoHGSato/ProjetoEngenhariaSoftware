@@ -1,14 +1,15 @@
 package com.engenhariasoftware.trackfibrabackend.controller;
 
+import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioListagemDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioRequestDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioResponseDTO;
+import com.engenhariasoftware.trackfibrabackend.enums.StatusFuncionario;
 import com.engenhariasoftware.trackfibrabackend.service.FuncionarioService;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/v1/funcionarios")
@@ -31,5 +32,13 @@ public class FuncionarioController {
         FuncionarioResponseDTO responseDTO = funcionarioService.cadastrarFuncionario(requestDTO);
 //        Devolvemos a resposta HTTP indicando que criamos o funcionario com sucesso (código 201 = CREATED)
         return ResponseEntity.status(HttpStatus.CREATED).body(responseDTO);
+    }
+//    Define que o metodo representa requisicoes GET
+    @GetMapping
+//    RequestParam apenas indica que recebemos os valores do frontend. Diferentemente do RequestBody usado no metodo do Post
+    public ResponseEntity<Page<FuncionarioListagemDTO>> listarFuncionarios(
+            @RequestParam(required = false) String nome, @RequestParam(required = false) StatusFuncionario status, Pageable pageable){
+
+        return ResponseEntity.ok(funcionarioService.listarFuncionarios(nome, status, pageable));
     }
 }
