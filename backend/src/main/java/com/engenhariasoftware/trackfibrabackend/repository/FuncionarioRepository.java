@@ -9,5 +9,8 @@ import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 public interface FuncionarioRepository extends JpaRepository<FuncionarioModel, Long>, JpaSpecificationExecutor<FuncionarioModel> {
     boolean existsByEmail(String email);
     boolean existsByCpf(String cpf);
-//Roda um SELECT EXISTS usando o nome passado para se referenciar a uma coluna com o msm nome (Ex: Cpf -> cpf)
+//Ambos rodam um SELECT EXISTS usando o nome passado para se referenciar a uma coluna com o msm nome (Ex: Cpf -> cpf)
+
+//Confere se tem algum registro com esse email, mas com outro id
+    boolean existsByEmailAndIdNot(String email, Long id);
 }
