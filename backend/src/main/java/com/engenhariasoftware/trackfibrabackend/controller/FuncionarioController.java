@@ -6,6 +6,7 @@ import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioRequestDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioResponseDTO;
 import com.engenhariasoftware.trackfibrabackend.enums.StatusFuncionario;
 import com.engenhariasoftware.trackfibrabackend.service.FuncionarioService;
+import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -28,7 +29,7 @@ public class FuncionarioController {
     @PostMapping
 //    RespondeEntity devolve uma resposta HTTP com um FuncionarioRespondeDTO (usa generics, ent tem que definir assim)
 //    RequestBody faz o contrário, recebe o json e transforma em um FuncionarioRequestDTO
-    public ResponseEntity<FuncionarioResponseDTO> cadastrarFuncionario(@RequestBody FuncionarioRequestDTO requestDTO){
+    public ResponseEntity<FuncionarioResponseDTO> cadastrarFuncionario(@RequestBody @Valid FuncionarioRequestDTO requestDTO){
 //        Chamamos o Service, passando requestDTO
         FuncionarioResponseDTO responseDTO = funcionarioService.cadastrarFuncionario(requestDTO);
 //        Devolvemos a resposta HTTP indicando que criamos o funcionario com sucesso (código 201 = CREATED)
