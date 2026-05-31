@@ -53,4 +53,17 @@ public class FuncionarioController {
 //          Retorna 200 OK com os dados atualizados do funcionario
         return ResponseEntity.ok().body(alteracaoDTO);
     }
+
+//    Define que o metodo representa requisicoes DELETE. o {id} na URL indica o indice do funcionario a ser desativado
+    @DeleteMapping("/{id}")
+//    Nao utiliza request body pois ele sempre realizara a mesma alteracao (statusFuncionario = INATIVO)
+    public ResponseEntity<FuncionarioResponseDTO> desativarFuncionario(@PathVariable Long id){
+
+//        TODO: validar ser o funcionario possui chamadas abertas antes de desativar (deve retornar 409) (implementar apos criar a entidade Chamada)
+
+//        Chama desativarFuncionario do Service e passa o id da url
+        FuncionarioResponseDTO desativacaoDTO = funcionarioService.desativarFuncionario(id);
+//        Retorna 200 OK com o status como INATIVO
+        return ResponseEntity.ok().body(desativacaoDTO);
+    }
 }

@@ -94,4 +94,19 @@ public class FuncionarioService {
         FuncionarioResponseDTO alteracoesDTO = new FuncionarioResponseDTO(funcionarioAlterado.getNome(), funcionarioAlterado.getEmail(), funcionarioAlterado.getNumeroTelefone(), funcionarioAlterado.getStatusFuncionario(), funcionarioAlterado.getPerfilFuncionario());
         return alteracoesDTO;
     }
+
+//    Valida se existe funcionario com aquele id e faz o soft delete (altera status para INATIVO)
+    public FuncionarioResponseDTO desativarFuncionario(Long id){
+        if(!funcionarioRepository.existsById(id)){
+            throw new RuntimeException("Não há nenhum funcionario cadastrado com esse id");
+        }
+//      Pega os dados do do funcionario e altera o status dele para INATIVO
+        FuncionarioModel funcionarioDesativado = funcionarioRepository.findById(id).get();
+        funcionarioDesativado.setStatusFuncionario(StatusFuncionario.INATIVO);
+//      salva a alteracao no banco de dados
+        funcionarioRepository.save(funcionarioDesativado);
+//      retorna os dados do funcionario para o front
+        FuncionarioResponseDTO desativacaoDTO = new FuncionarioResponseDTO(funcionarioDesativado.getNome(), funcionarioDesativado.getEmail(),funcionarioDesativado.getNumeroTelefone(), funcionarioDesativado.getStatusFuncionario(), funcionarioDesativado.getPerfilFuncionario());
+        return desativacaoDTO;
+    }
 }
