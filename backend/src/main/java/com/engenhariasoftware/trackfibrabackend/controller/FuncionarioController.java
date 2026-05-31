@@ -48,7 +48,7 @@ public class FuncionarioController {
     @PutMapping("/{id}")
     //    PathVariable captura o id diretamente da URL (ex: /api/v1/funcionarios/3 -> id = 3)
     //    RequestBody recebe o json com os novos dados e transforma em FuncionarioEdicaoDTO
-    public ResponseEntity<FuncionarioResponseDTO> editarFuncionario(@PathVariable Long id, @RequestBody FuncionarioEdicaoDTO edicaoDTO) {
+    public ResponseEntity<FuncionarioResponseDTO> editarFuncionario(@PathVariable Long id, @RequestBody @Valid FuncionarioEdicaoDTO edicaoDTO) {
 //        Chama o service passando o id do funcionario e os novos dados
         FuncionarioResponseDTO alteracaoDTO = funcionarioService.editarFuncionario(id, edicaoDTO);
 //          Retorna 200 OK com os dados atualizados do funcionario
