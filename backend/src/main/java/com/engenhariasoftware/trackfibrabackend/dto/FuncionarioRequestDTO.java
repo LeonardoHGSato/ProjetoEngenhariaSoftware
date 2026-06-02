@@ -15,6 +15,7 @@ public class FuncionarioRequestDTO {
     private String nome;
     private String email;
     private String senha;
+    //    Validacao de numero de telefone baseada no tamanho dele e se há apenas números
     @Pattern(regexp = "^\\d{11}$", message = "Telefone inválido. Use apenas números com DDD (11 dígitos)")
     private String numeroTelefone;
     @CpfValido

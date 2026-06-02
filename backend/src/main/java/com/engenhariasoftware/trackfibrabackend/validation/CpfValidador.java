@@ -10,6 +10,7 @@ public class CpfValidador implements ConstraintValidator<CpfValido, String> {
         if (cpf == null || cpf.isBlank()) {
             return false;
         }
+//        valida o cpf usando os digitos verificadores
         try {
             CPFValidator validator = new CPFValidator();
             validator.assertValid(cpf);
