@@ -1,66 +1,44 @@
-import Image from "next/image";
+"use client";
+
+import { useRouter } from "next/navigation";
+import PrivateRoute from "@/components/PrivateRoute";
+import { useAuth } from "@/context/AuthContext";
 import styles from "./page.module.css";
 
 export default function Home() {
+  const router = useRouter();
+  const { user, logout } = useAuth();
+
+  function handleLogout() {
+    logout();
+    router.replace("/login");
+  }
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.js file.</h1>
+    <PrivateRoute>
+      <div className={styles.page}>
+        <header className={styles.topo}>
+          <span className={styles.marca}>TrackFibra</span>
+          <div className={styles.usuario}>
+            {user?.nome && <span className={styles.nome}>{user.nome}</span>}
+            <button
+              type="button"
+              className={styles.sair}
+              onClick={handleLogout}
+            >
+              Sair
+            </button>
+          </div>
+        </header>
+
+        <main className={styles.conteudo}>
+          <h1>Painel de gestão de chamadas</h1>
           <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
+            Você está autenticado{user?.nome ? `, ${user.nome}` : ""}. As telas
+            de funcionários, veículos e chamadas entram aqui.
           </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+        </main>
+      </div>
+    </PrivateRoute>
   );
 }
