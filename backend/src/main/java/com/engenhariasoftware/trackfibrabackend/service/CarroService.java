@@ -19,6 +19,11 @@ public class CarroService {
     }
 
     public CarroResponseDTO cadastrar(CarroRequestDTO dto) {
+
+        int anoAtual = java.time.Year.now().getValue();
+        if (dto.ano() > anoAtual) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O ano do carro não pode ser no futuro");
+        }
         if (carroRepository.existsByPlaca(dto.placa())) {
             throw new ResponseStatusException(HttpStatus.CONFLICT, "Placa já cadastrada");
         }

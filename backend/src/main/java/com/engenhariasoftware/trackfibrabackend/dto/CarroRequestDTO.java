@@ -1,5 +1,6 @@
 package com.engenhariasoftware.trackfibrabackend.dto;
 
+import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
@@ -17,6 +18,7 @@ public record CarroRequestDTO(
         @NotBlank(message = "A marca é obrigatório")
         String marca,
 
+        @Min(value = 1990, message = "Ano mínimo é 1990")
         @NotNull(message = "O ano é obrigatório")
         Integer ano
 ) {
