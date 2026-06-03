@@ -3,12 +3,14 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import api from "@/lib/api";
+import { useAuth } from "@/context/AuthContext";
 import styles from "./login.module.css";
 
 const EMAIL_REGEX = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
 
 export default function LoginPage() {
   const router = useRouter();
+  const { login } = useAuth();
 
   const [email, setEmail] = useState("");
   const [senha, setSenha] = useState("");
@@ -46,12 +48,8 @@ export default function LoginPage() {
     try {
       const { data } = await api.post("/api/v1/auth/login", { email, senha });
 
-      // Guarda o token e os dados básicos do usuário retornados pelo backend.
-      // (Numa próxima etapa isso passa a viver dentro de um AuthContext.)
-      const storage = manterConectado ? localStorage : sessionStorage;
-      storage.setItem("token", data.token);
-      storage.setItem("role", data.role);
-      storage.setItem("nome", data.nome);
+      // Persiste a sessão via AuthContext (token + dados do usuário).
+      login(data, manterConectado);
 
       router.push("/");
     } catch (err) {

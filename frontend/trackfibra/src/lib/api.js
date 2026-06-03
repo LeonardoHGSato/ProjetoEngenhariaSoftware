@@ -10,4 +10,18 @@ const api = axios.create({
   },
 });
 
+// Injeta o token JWT em toda requisição autenticada.
+// O token é gerenciado pelo AuthContext, mas lido direto do storage aqui
+// porque o interceptor roda fora do ciclo de render do React.
+api.interceptors.request.use((config) => {
+  if (typeof window !== "undefined") {
+    const token =
+      localStorage.getItem("token") ?? sessionStorage.getItem("token");
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`;
+    }
+  }
+  return config;
+});
+
 export default api;
