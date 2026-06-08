@@ -2,6 +2,7 @@ package com.engenhariasoftware.trackfibrabackend.controller;
 
 import com.engenhariasoftware.trackfibrabackend.dto.CarroRequestDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.CarroResponseDTO;
+import com.engenhariasoftware.trackfibrabackend.dto.CarroUpdateDTO;
 import com.engenhariasoftware.trackfibrabackend.enums.StatusCarro;
 import com.engenhariasoftware.trackfibrabackend.service.CarroService;
 import jakarta.validation.Valid;
@@ -36,5 +37,13 @@ public class CarroController {
     @GetMapping("/{id}")
     public ResponseEntity<CarroResponseDTO> buscarPorId(@PathVariable Long id){
         return ResponseEntity.ok(carroService.buscarPorId(id));
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CarroResponseDTO> editar(
+            @PathVariable Long id,
+            @RequestBody @Valid CarroUpdateDTO dto){
+
+        return ResponseEntity.ok(carroService.editar(id, dto));
     }
 }
