@@ -46,4 +46,10 @@ public class CarroController {
 
         return ResponseEntity.ok(carroService.editar(id, dto));
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> remover(@PathVariable Long id) {
+        carroService.remover(id);
+        return ResponseEntity.noContent().build();
+    }
 }
