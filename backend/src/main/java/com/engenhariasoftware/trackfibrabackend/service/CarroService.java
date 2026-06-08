@@ -108,4 +108,13 @@ public class CarroService {
                 carroSalvo.getStatus()
         );
     }
+
+    public void remover(Long id){
+        Carro carro = carroRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Carro não encontrado"));
+
+        //TODO: retornar 409 se o carro tiver chamada ABERTA
+
+        carro.setStatus(StatusCarro.DESATIVADO);
+        carroRepository.save(carro);
+    }
 }
