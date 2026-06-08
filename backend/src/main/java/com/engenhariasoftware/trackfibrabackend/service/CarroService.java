@@ -3,6 +3,7 @@ package com.engenhariasoftware.trackfibrabackend.service;
 
 import com.engenhariasoftware.trackfibrabackend.dto.CarroRequestDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.CarroResponseDTO;
+import com.engenhariasoftware.trackfibrabackend.dto.CarroUpdateDTO;
 import com.engenhariasoftware.trackfibrabackend.enums.StatusCarro;
 import com.engenhariasoftware.trackfibrabackend.model.Carro;
 import com.engenhariasoftware.trackfibrabackend.repository.CarroRepository;
@@ -71,6 +72,7 @@ public class CarroService {
     public CarroResponseDTO buscarPorId(Long id){
 
         Carro carro = carroRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Carro não encontrado"));
+        //TODO: falta incluir chamada ativa quando a entidade Chamada for criada
         return new CarroResponseDTO(
                 carro.getId(),
                 carro.getPlaca(),
@@ -78,6 +80,32 @@ public class CarroService {
                 carro.getMarca(),
                 carro.getAno(),
                 carro.getStatus()
+        );
+    }
+
+    public CarroResponseDTO editar(Long id, CarroUpdateDTO dto){
+        Carro carro = carroRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Carro não encontrado"));
+        int anoAtual = java.time.Year.now().getValue();
+        if (dto.ano() > anoAtual) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O ano do carro não pode ser no futuro");
+        }
+
+        //TODO: bloquear a atualização para MANUTENÇÃO se a chamada estiver ABERTA
+
+        carro.setModelo(dto.modelo());
+        carro.setMarca(dto.marca());
+        carro.setAno(dto.ano());
+        carro.setStatus(dto.status());
+
+        Carro carroSalvo = carroRepository.save(carro);
+
+        return new CarroResponseDTO(
+                carroSalvo.getId(),
+                carroSalvo.getPlaca(),
+                carroSalvo.getModelo(),
+                carroSalvo.getMarca(),
+                carroSalvo.getAno(),
+                carroSalvo.getStatus()
         );
     }
 }
