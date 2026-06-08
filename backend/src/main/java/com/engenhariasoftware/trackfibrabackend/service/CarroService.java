@@ -95,7 +95,9 @@ public class CarroService {
         carro.setModelo(dto.modelo());
         carro.setMarca(dto.marca());
         carro.setAno(dto.ano());
-        carro.setStatus(dto.status());
+        if(dto.status() != null) {
+            carro.setStatus(dto.status());
+        }
 
         Carro carroSalvo = carroRepository.save(carro);
 
