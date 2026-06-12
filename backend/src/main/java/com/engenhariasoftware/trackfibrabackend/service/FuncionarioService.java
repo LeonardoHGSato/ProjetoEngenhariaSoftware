@@ -1,5 +1,6 @@
 package com.engenhariasoftware.trackfibrabackend.service;
 
+import com.engenhariasoftware.trackfibrabackend.config.BusinessException;
 import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioEdicaoDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioListagemDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioRequestDTO;
@@ -8,7 +9,6 @@ import com.engenhariasoftware.trackfibrabackend.enums.StatusFuncionario;
 import com.engenhariasoftware.trackfibrabackend.model.FuncionarioModel;
 import com.engenhariasoftware.trackfibrabackend.repository.FuncionarioRepository;
 import com.engenhariasoftware.trackfibrabackend.repository.FuncionarioSpecification;
-import jdk.jshell.Snippet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
@@ -29,10 +29,10 @@ public class FuncionarioService {
 
     public FuncionarioResponseDTO cadastrarFuncionario(FuncionarioRequestDTO requestDTO){
         if(funcionarioRepository.existsByCpf(requestDTO.getCpf())){
-            throw new RuntimeException("Cpf já cadastrado");
+            throw new BusinessException("Cpf já cadastrado");
         }
         if(funcionarioRepository.existsByEmail(requestDTO.getEmail())){
-            throw new RuntimeException("Email já cadastrado");
+            throw new BusinessException("Email já cadastrado");
         }
 
 //      Por conta da pré-definição do status e do perfil no FuncionarioModel, é necessário criar um objeto vazio
@@ -74,10 +74,10 @@ public class FuncionarioService {
 //    Valida se o existe funcionario com aquele id e se ja existe alguem com o mesmo email. Depois, envia as alteracoes para o banco de dados
     public FuncionarioResponseDTO editarFuncionario(Long id, FuncionarioEdicaoDTO edicaoDTO){
         if(!funcionarioRepository.existsById(id)){
-            throw new RuntimeException("Não há nenhum funcionario cadastrado com esse id");
+            throw new BusinessException("Não há nenhum funcionario cadastrado com esse id");
         }
         if(funcionarioRepository.existsByEmailAndIdNot(edicaoDTO.getEmail(), id)){
-            throw new RuntimeException("Já há outro funcionario cadastrado com esse email");
+            throw new BusinessException("Já há outro funcionario cadastrado com esse email");
         }
 
 //define a varivel que recebe os dados a do funcinoario que tera alguma alteracao
@@ -98,7 +98,7 @@ public class FuncionarioService {
 //    Valida se existe funcionario com aquele id e faz o soft delete (altera status para INATIVO)
     public FuncionarioResponseDTO desativarFuncionario(Long id){
         if(!funcionarioRepository.existsById(id)){
-            throw new RuntimeException("Não há nenhum funcionario cadastrado com esse id");
+            throw new BusinessException("Não há nenhum funcionario cadastrado com esse id");
         }
 //      Pega os dados do do funcionario e altera o status dele para INATIVO
         FuncionarioModel funcionarioDesativado = funcionarioRepository.findById(id).get();
