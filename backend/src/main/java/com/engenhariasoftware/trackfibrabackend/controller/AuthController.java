@@ -25,29 +25,42 @@ public class AuthController {
 
     @PostMapping("/login")
     public ResponseEntity<LoginResponseDTO> login(@Valid @RequestBody LoginRequestDTO request) {
+        try {
+            // O Spring Security tenta autenticar e-mail e senha digitados
+            Authentication authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            request.getEmail(),
+                            request.getSenha()
+                    )
+            );
 
-        // 1. O Spring Security tenta autenticar e-mail e senha digitados
-        // Se a senha estiver errada ou o usuário inativo (conforme sua regra isEnabled), dispara erro automaticamente
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        request.getEmail(),
-                        request.getSenha()
-                )
-        );
+            // Recupera o seu FuncionarioModel real
+            FuncionarioModel funcionario = (FuncionarioModel) authentication.getPrincipal();
 
-        // 2. Recupera o usuário autenticado (que é o seu FuncionarioModel)
-        FuncionarioModel funcionario = (FuncionarioModel) authentication.getPrincipal();
+            // CRITÉRIO DE ACEITAÇÃO (Para o amigo do front): Força o estouro da exceção se estiver inativo
+            if (!funcionario.isEnabled()) {
+                throw new org.springframework.security.authentication.DisabledException("Usuário inativo. Acesso negado.");
+            }
 
-        // 3. Gera o token JWT incluindo a claim da role
-        String token = jwtService.gerarToken(funcionario);
+            // Gera o token JWT incluindo a claim da role
+            String token = jwtService.gerarToken(funcionario);
 
-        // 4. Extrai a role formatada para enviar no corpo da resposta
-        String role = funcionario.getAuthorities().stream()
-                .findFirst()
-                .map(auth -> auth.getAuthority())
-                .orElse("ROLE_FUNCIONARIO");
+            // Extrai a role formatada para enviar no corpo da resposta
+            String role = funcionario.getAuthorities().stream()
+                    .findFirst()
+                    .map(auth -> auth.getAuthority())
+                    .orElse("ROLE_FUNCIONARIO");
 
-        // 5. Retorna { token, role, nome } com HTTP 200 Ok
-        return ResponseEntity.ok(new LoginResponseDTO(token, role, funcionario.getNome()));
+            // Retorna { token, role, nome } com HTTP 200 Ok
+            return ResponseEntity.ok(new LoginResponseDTO(token, role, funcionario.getNome()));
+
+        } catch (org.springframework.security.core.AuthenticationException e) {
+            // Se o erro já for de usuário inativo, repassa ele para o handler (403)
+            if (e instanceof org.springframework.security.authentication.DisabledException) {
+                throw e;
+            }
+            // Qualquer outra falha de autenticação (senha errada, email inexistente) vira BadCredentials (401)
+            throw new org.springframework.security.authentication.BadCredentialsException("Credenciais inválidas. Verifique seu e-mail e senha.");
+        }
     }
 }
