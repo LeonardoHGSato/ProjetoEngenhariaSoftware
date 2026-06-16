@@ -17,7 +17,7 @@ public class FuncionarioRequestDTO {
     @NotBlank(message = "O nome é obrigatório.")
     private String nome;
 
-    @NotBlank(message = "O nome é obrigatório.")
+    @NotBlank(message = "O email é obrigatório.")
     @Email(message = "Formato de email inválido")
     private String email;
 
