@@ -1,0 +1,77 @@
+.shell {
+  display: flex;
+  min-height: 100vh;
+}
+
+/* Mobile-first: a sidebar fica fora da tela e desliza ao abrir. */
+.painel {
+  position: fixed;
+  top: 0;
+  left: 0;
+  height: 100%;
+  z-index: 30;
+  transform: translateX(-100%);
+  transition: transform 0.2s ease;
+}
+
+.painelAberto {
+  transform: translateX(0);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 20;
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.principal {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-width: 0;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 1rem;
+  border-bottom: 1px solid rgba(15, 23, 42, 0.1);
+}
+
+.hamburguer {
+  border: none;
+  background: transparent;
+  font-size: 1.5rem;
+  line-height: 1;
+  cursor: pointer;
+  color: var(--foreground);
+}
+
+.usuario {
+  margin-left: auto;
+  font-weight: 600;
+}
+
+.conteudo {
+  flex: 1;
+  padding: 1.5rem 1rem;
+}
+
+/* Desktop: a sidebar fica fixa no layout e o menu retrátil some. */
+@media (min-width: 768px) {
+  .painel {
+    position: static;
+    transform: none;
+    z-index: auto;
+  }
+
+  .overlay {
+    display: none;
+  }
+
+  .hamburguer {
+    display: none;
+  }
+}
