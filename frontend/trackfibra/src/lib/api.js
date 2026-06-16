@@ -1,8 +1,7 @@
 import axios from "axios";
 
-// Instância central do axios usada por toda a aplicação.
-// A URL base aponta para o backend Spring Boot (porta 8080 por padrão).
-// Em produção/ambiente local diferente, defina NEXT_PUBLIC_API_URL no .env.local.
+import { STORAGE_KEYS } from "@/context/AuthContext";
+
 const api = axios.create({
   baseURL: process.env.NEXT_PUBLIC_API_URL ?? "http://localhost:8080",
   headers: {
@@ -10,9 +9,6 @@ const api = axios.create({
   },
 });
 
-// Injeta o token JWT em toda requisição autenticada.
-// O token é gerenciado pelo AuthContext, mas lido direto do storage aqui
-// porque o interceptor roda fora do ciclo de render do React.
 api.interceptors.request.use((config) => {
   if (typeof window !== "undefined") {
     const token =
@@ -23,5 +19,28 @@ api.interceptors.request.use((config) => {
   }
   return config;
 });
+
+api.interceptors.response.use(
+  (response) => response,
+  (error) => {
+    if (typeof window !== "undefined" && error.response?.status === 401) {
+      const tinhaToken =
+        localStorage.getItem(STORAGE_KEYS.token) ??
+        sessionStorage.getItem(STORAGE_KEYS.token);
+
+      if (tinhaToken) {
+        [localStorage, sessionStorage].forEach((storage) =>
+          Object.values(STORAGE_KEYS).forEach((chave) =>
+            storage.removeItem(chave),
+          ),
+        );
+        if (window.location.pathname !== "/login") {
+          window.location.assign("/login");
+        }
+      }
+    }
+    return Promise.reject(error);
+  },
+);
 
 export default api;

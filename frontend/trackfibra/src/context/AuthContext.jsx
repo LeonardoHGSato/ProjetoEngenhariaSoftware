@@ -4,8 +4,6 @@ import { createContext, useContext, useEffect, useState } from "react";
 
 const AuthContext = createContext(null);
 
-// Chaves usadas no storage. Centralizadas aqui para o interceptor do axios
-// (src/lib/api.js) ler exatamente as mesmas.
 export const STORAGE_KEYS = {
   token: "token",
   role: "role",
@@ -19,8 +17,6 @@ function limparStorages() {
 }
 
 export function AuthProvider({ children }) {
-  // token/user num único estado; carregando evita "piscar" telas protegidas
-  // enquanto a sessão é hidratada do storage (usado pelo PrivateRoute adiante).
   const [session, setSession] = useState({
     token: null,
     user: null,
@@ -33,8 +29,6 @@ export function AuthProvider({ children }) {
       : sessionStorage;
     const tokenSalvo = storage.getItem(STORAGE_KEYS.token);
 
-    // A hidratação a partir do storage do navegador só é possível após a
-    // montagem (localStorage não existe no SSR), por isso o setState no efeito.
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setSession({
       token: tokenSalvo ?? null,
@@ -48,8 +42,6 @@ export function AuthProvider({ children }) {
     });
   }, []);
 
-  // Recebe a resposta do backend ({ token, role, nome }) e persiste a sessão.
-  // manterConectado decide entre localStorage (persiste) e sessionStorage (só na aba).
   function login(data, manterConectado = true) {
     const storage = manterConectado ? localStorage : sessionStorage;
     storage.setItem(STORAGE_KEYS.token, data.token);

@@ -48,13 +48,12 @@ export default function LoginPage() {
     try {
       const { data } = await api.post("/api/v1/auth/login", { email, senha });
 
-      // Persiste a sessão via AuthContext (token + dados do usuário).
       login(data, manterConectado);
 
-      router.push("/");
+      router.push(data.role === "ROLE_SUPERVISOR" ? "/chamadas" : "/minhas-chamadas");
     } catch (err) {
       if (err.response?.status === 401 || err.response?.status === 403) {
-        setErroGeral("E-mail ou senha incorretos.");
+        setErroGeral(err.response.data ?? "E-mail ou senha incorretos.");
       } else {
         setErroGeral("Não foi possível entrar. Tente novamente.");
       }
