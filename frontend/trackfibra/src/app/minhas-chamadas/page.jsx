@@ -1,11 +1,15 @@
 "use client";
 
-import PrivateRoute from "@/components/PrivateRoute";
+import AppShell from "@/components/AppShell";
+import RoleRoute from "@/components/RoleRoute";
+import { ROLES } from "@/config/menu";
 
 export default function MinhasChamadasPage() {
   return (
-    <PrivateRoute>
-      <main />
-    </PrivateRoute>
+    <RoleRoute requiredRole={ROLES.tecnico}>
+      <AppShell>
+        <h1>Minhas Chamadas</h1>
+      </AppShell>
+    </RoleRoute>
   );
 }
