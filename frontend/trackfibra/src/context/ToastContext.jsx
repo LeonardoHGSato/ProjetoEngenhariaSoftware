@@ -1,6 +1,15 @@
 "use client";
 
-import { createContext, useCallback, useContext, useRef, useState } from "react";
+import {
+  createContext,
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+} from "react";
+
+import { registrarHandlerErro } from "@/lib/api";
 
 const ToastContext = createContext(null);
 
@@ -27,6 +36,11 @@ export function ToastProvider({ children }) {
     },
     [removerToast],
   );
+
+  useEffect(() => {
+    registrarHandlerErro((mensagem) => adicionarToast(mensagem, "error"));
+    return () => registrarHandlerErro(null);
+  }, [adicionarToast]);
 
   const toast = {
     success: (mensagem, duracao) => adicionarToast(mensagem, "success", duracao),
