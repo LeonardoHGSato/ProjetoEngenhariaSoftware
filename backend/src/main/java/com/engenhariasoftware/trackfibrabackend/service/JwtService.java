@@ -64,7 +64,8 @@ public class JwtService {
     }
 
     private Key getSigningKey(){
-        byte[]keyBytes = Decoders.BASE64.decode(Base64.getEncoder().encodeToString(SECRET_KEY.getBytes()));
+        // Remove a volta desnecessária em Base64 e pega os bytes diretos da String
+        byte[] keyBytes = SECRET_KEY.getBytes(java.nio.charset.StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 }

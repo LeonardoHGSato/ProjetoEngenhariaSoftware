@@ -16,8 +16,8 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        // Agora lança a RegraNegocioException se o e-mail não existir no banco
+//        Lança UsernameNotFoundException se o e-mail não existir
         return funcionarioRepository.findByEmail(username)
-                .orElseThrow(() -> new BusinessException("Usuário não encontrado com o e-mail: " + username));
+                .orElseThrow(() -> new UsernameNotFoundException("Usuário não encontrado com o e-mail: " + username));
     }
 }
