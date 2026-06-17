@@ -1,0 +1,3 @@
+ALTER TABLE funcionarios
+    ALTER COLUMN numero_telefone TYPE VARCHAR(15),
+    ALTER COLUMN email TYPE VARCHAR(254);

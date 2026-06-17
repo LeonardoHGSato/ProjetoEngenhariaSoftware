@@ -42,3 +42,4 @@ frontend/.env.local
 # ===== GERAL =====
 .env
 .DS_Store
+backend/src/main/resources/application.properties
