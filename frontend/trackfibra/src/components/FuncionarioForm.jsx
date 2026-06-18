@@ -65,6 +65,8 @@ export default function FuncionarioForm({
 
     if (criando) {
       if (!senha) novosErros.senha = "A senha é obrigatória.";
+      else if (senha.length < 6)
+        novosErros.senha = "A senha deve ter no mínimo 6 caracteres.";
       if (!cpfValido(cpf)) novosErros.cpf = "CPF inválido.";
     }
 
