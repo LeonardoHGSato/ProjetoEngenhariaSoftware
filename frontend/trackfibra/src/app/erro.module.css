@@ -1,0 +1,41 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 0.75rem;
+  min-height: 100vh;
+  padding: 2rem 1rem;
+  text-align: center;
+}
+
+.codigo {
+  font-size: 4rem;
+  font-weight: 800;
+  line-height: 1;
+  color: #2563eb;
+}
+
+.titulo {
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.mensagem {
+  max-width: 28rem;
+  color: #475569;
+}
+
+.voltar {
+  margin-top: 1rem;
+  padding: 0.65rem 1.25rem;
+  border-radius: 8px;
+  background: #2563eb;
+  color: #ffffff;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.voltar:hover {
+  background: #1d4ed8;
+}

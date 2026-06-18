@@ -4,14 +4,19 @@ import { useEffect } from "react";
 import { useRouter } from "next/navigation";
 import { useAuth } from "@/context/AuthContext";
 
-export default function Home() {
+export default function PrivateRoute({ children }) {
   const router = useRouter();
   const { isAuthenticated, carregando } = useAuth();
 
   useEffect(() => {
-    if (carregando) return;
-    router.replace(isAuthenticated ? "/dashboard" : "/login");
+    if (!carregando && !isAuthenticated) {
+      router.replace("/login");
+    }
   }, [carregando, isAuthenticated, router]);
 
-  return null;
+  if (carregando || !isAuthenticated) {
+    return null;
+  }
+
+  return children;
 }
