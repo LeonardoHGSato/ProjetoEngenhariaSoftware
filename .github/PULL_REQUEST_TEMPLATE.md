@@ -4,9 +4,7 @@
 Closes #
 
 ## Tipo
-- [ ] Backend
-- [ ] Frontend
-- [ ] Infra
+Backend · Frontend · Infra  ← deixe só o que se aplica
 
 ## Checklist
 - [ ] Critérios de aceitação da issue atendidos
