@@ -44,6 +44,12 @@ public class FuncionarioController {
         return ResponseEntity.ok(funcionarioService.listarFuncionarios(nome, status, pageable));
     }
 
+//    Novo endopoint GET para listar as informações de um funcionário individual
+    @GetMapping("/{id}")
+    public ResponseEntity<FuncionarioResponseDTO> buscarFuncionario(@PathVariable Long id){
+        return ResponseEntity.ok(funcionarioService.buscarPorId(id));
+    }
+
 //Define que o metodo representa requisicoes PUT. O {id} na URL indica qual funcionario sera editado
     @PutMapping("/{id}")
     //    PathVariable captura o id diretamente da URL (ex: /api/v1/funcionarios/3 -> id = 3)
@@ -59,9 +65,6 @@ public class FuncionarioController {
     @DeleteMapping("/{id}")
 //    Nao utiliza request body pois ele sempre realizara a mesma alteracao (statusFuncionario = INATIVO)
     public ResponseEntity<FuncionarioResponseDTO> desativarFuncionario(@PathVariable Long id){
-
-//        TODO: validar ser o funcionario possui chamadas abertas antes de desativar (deve retornar 409) (implementar apos criar a entidade Chamada)
-
 //        Chama desativarFuncionario do Service e passa o id da url
         FuncionarioResponseDTO desativacaoDTO = funcionarioService.desativarFuncionario(id);
 //        Retorna 200 OK com o status como INATIVO

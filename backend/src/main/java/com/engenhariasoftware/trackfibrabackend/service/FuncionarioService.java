@@ -5,15 +5,17 @@ import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioListagemDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioRequestDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioResponseDTO;
 import com.engenhariasoftware.trackfibrabackend.enums.StatusFuncionario;
+import com.engenhariasoftware.trackfibrabackend.exception.ConflitoException;
+import com.engenhariasoftware.trackfibrabackend.exception.RecursoNaoEncontradoException;
 import com.engenhariasoftware.trackfibrabackend.model.FuncionarioModel;
 import com.engenhariasoftware.trackfibrabackend.repository.FuncionarioRepository;
 import com.engenhariasoftware.trackfibrabackend.repository.FuncionarioSpecification;
-import jdk.jshell.Snippet;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class FuncionarioService {
@@ -29,10 +31,10 @@ public class FuncionarioService {
 
     public FuncionarioResponseDTO cadastrarFuncionario(FuncionarioRequestDTO requestDTO){
         if(funcionarioRepository.existsByCpf(requestDTO.getCpf())){
-            throw new RuntimeException("Cpf já cadastrado");
+            throw new ConflitoException("Cpf já cadastrado");
         }
         if(funcionarioRepository.existsByEmail(requestDTO.getEmail())){
-            throw new RuntimeException("Email já cadastrado");
+            throw new ConflitoException("Email já cadastrado");
         }
 
 //      Por conta da pré-definição do status e do perfil no FuncionarioModel, é necessário criar um objeto vazio
@@ -47,8 +49,7 @@ public class FuncionarioService {
 //        Por fim, o funcionário novo é salvo no banco de dados
         funcionarioRepository.save(funcionarioNovo);
 //        Devolvemos para o front os dados do funcionario registrado
-        FuncionarioResponseDTO responseDTO = new FuncionarioResponseDTO(funcionarioNovo.getNome(), funcionarioNovo.getEmail(), funcionarioNovo.getNumeroTelefone(), funcionarioNovo.getStatusFuncionario(), funcionarioNovo.getPerfilFuncionario());
-        return responseDTO;
+        return toResponseDTO(funcionarioNovo);
     }
 
 //    seleciona os objetos que condizem com os filtros de nome e status e retorna os dados deles
@@ -56,7 +57,7 @@ public class FuncionarioService {
     public Page<FuncionarioListagemDTO> listarFuncionarios(String nome, StatusFuncionario status, Pageable pageable){
         Specification<FuncionarioModel> filtros =
                 FuncionarioSpecification.comNome(nome)
-                .and(FuncionarioSpecification.comSatatus(status));
+                .and(FuncionarioSpecification.comStatus(status));
 
 //        Page e um objeto do Spring que contem os resultados e as informacoes de paginacao
         Page<FuncionarioModel> funcionarios = funcionarioRepository.findAll(filtros, pageable);
@@ -71,17 +72,22 @@ public class FuncionarioService {
         ));
     }
 
+    public FuncionarioResponseDTO buscarPorId(Long id){
+        FuncionarioModel funcionario = funcionarioRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Não há nenhum funcionário cadastrado com esse id"));
+        return toResponseDTO(funcionario);
+    }
+
+    @Transactional
 //    Valida se o existe funcionario com aquele id e se ja existe alguem com o mesmo email. Depois, envia as alteracoes para o banco de dados
     public FuncionarioResponseDTO editarFuncionario(Long id, FuncionarioEdicaoDTO edicaoDTO){
-        if(!funcionarioRepository.existsById(id)){
-            throw new RuntimeException("Não há nenhum funcionario cadastrado com esse id");
-        }
+        FuncionarioModel funcionarioAlterado = funcionarioRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Não há nenhum funcionário cadastrado com esse id"));
+
         if(funcionarioRepository.existsByEmailAndIdNot(edicaoDTO.getEmail(), id)){
-            throw new RuntimeException("Já há outro funcionario cadastrado com esse email");
+            throw new ConflitoException("Já há outro funcionario cadastrado com esse email");
         }
 
-//define a varivel que recebe os dados a do funcinoario que tera alguma alteracao
-        FuncionarioModel funcionarioAlterado = funcionarioRepository.findById(id).get();
 //Altera os dados do funcionario
         funcionarioAlterado.setNome(edicaoDTO.getNome());
         funcionarioAlterado.setEmail(edicaoDTO.getEmail());
@@ -91,10 +97,10 @@ public class FuncionarioService {
 //        Altera os dados no banco de dados
         funcionarioRepository.save(funcionarioAlterado);
 //Envia os dados alterados para o front
-        FuncionarioResponseDTO alteracoesDTO = new FuncionarioResponseDTO(funcionarioAlterado.getNome(), funcionarioAlterado.getEmail(), funcionarioAlterado.getNumeroTelefone(), funcionarioAlterado.getStatusFuncionario(), funcionarioAlterado.getPerfilFuncionario());
-        return alteracoesDTO;
+        return toResponseDTO(funcionarioAlterado);
     }
 
+    @Transactional
 //    Valida se existe funcionario com aquele id e faz o soft delete (altera status para INATIVO)
     public FuncionarioResponseDTO desativarFuncionario(Long id){
         if(!funcionarioRepository.existsById(id)){
@@ -106,7 +112,16 @@ public class FuncionarioService {
 //      salva a alteracao no banco de dados
         funcionarioRepository.save(funcionarioDesativado);
 //      retorna os dados do funcionario para o front
-        FuncionarioResponseDTO desativacaoDTO = new FuncionarioResponseDTO(funcionarioDesativado.getNome(), funcionarioDesativado.getEmail(),funcionarioDesativado.getNumeroTelefone(), funcionarioDesativado.getStatusFuncionario(), funcionarioDesativado.getPerfilFuncionario());
-        return desativacaoDTO;
+        return toResponseDTO(funcionarioDesativado);
+    }
+
+    private FuncionarioResponseDTO toResponseDTO(FuncionarioModel funcionarioModel){
+        return new FuncionarioResponseDTO(
+            funcionarioModel.getId(),
+            funcionarioModel.getNome(),
+            funcionarioModel.getEmail(),
+            funcionarioModel.getNumeroTelefone(),
+            funcionarioModel.getStatusFuncionario(),
+            funcionarioModel.getPerfilFuncionario());
     }
 }
