@@ -2,7 +2,6 @@ package com.engenhariasoftware.trackfibrabackend.repository;
 
 import com.engenhariasoftware.trackfibrabackend.enums.StatusFuncionario;
 import com.engenhariasoftware.trackfibrabackend.model.FuncionarioModel;
-import jdk.jshell.Snippet;
 import org.springframework.data.jpa.domain.Specification;
 
 public class FuncionarioSpecification {
@@ -12,7 +11,7 @@ public class FuncionarioSpecification {
                 cb.like(cb.lower(root.get("nome")), "%" + nome.toLowerCase() + "%");
     }
 
-    public static Specification<FuncionarioModel> comSatatus(StatusFuncionario status){
+    public static Specification<FuncionarioModel> comStatus(StatusFuncionario status){
         return (root, query, cb) -> status == null ? null:
                 cb.equal(root.get("statusFuncionario"), status);
     }

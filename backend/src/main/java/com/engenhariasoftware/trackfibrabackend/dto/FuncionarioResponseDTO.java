@@ -13,6 +13,7 @@ import lombok.Setter;
 @Setter
 
 public class FuncionarioResponseDTO {
+    private Long id;
     private String nome;
     private String email;
     private String numeroTelefone;
