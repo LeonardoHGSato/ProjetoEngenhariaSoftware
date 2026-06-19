@@ -49,6 +49,8 @@ export default function EditarFuncionarioPage() {
   }, [id]);
 
   useEffect(() => {
+    // Carregamento inicial dos dados (fetch on mount); o setState sincrono no inicio de carregar() e intencional.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     carregar();
   }, [carregar]);
 

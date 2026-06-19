@@ -55,6 +55,8 @@ export default function FuncionariosPage() {
   }, [buscaComAtraso, status, pagina]);
 
   useEffect(() => {
+    // Carregamento inicial / refetch ao mudar filtros (fetch on mount); o setState sincrono no inicio de carregar() e intencional.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     carregar();
   }, [carregar]);
 
