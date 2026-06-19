@@ -1,6 +1,6 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  /* com.engenhariasoftware.trackfibrabackend.config options here */
+  /* config options here */
   reactCompiler: true,
 };
 
