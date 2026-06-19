@@ -29,6 +29,7 @@ public class FuncionarioController {
     @PostMapping
 //    RespondeEntity devolve uma resposta HTTP com um FuncionarioRespondeDTO (usa generics, ent tem que definir assim)
 //    RequestBody faz o contrário, recebe o json e transforma em um FuncionarioRequestDTO
+//    A annotation Valid apenas valida os dados (nesse caso, apenas o cpf e numero de telefone)
     public ResponseEntity<FuncionarioResponseDTO> cadastrarFuncionario(@RequestBody @Valid FuncionarioRequestDTO requestDTO){
 //        Chamamos o Service, passando requestDTO
         FuncionarioResponseDTO responseDTO = funcionarioService.cadastrarFuncionario(requestDTO);
@@ -54,6 +55,7 @@ public class FuncionarioController {
     @PutMapping("/{id}")
     //    PathVariable captura o id diretamente da URL (ex: /api/v1/funcionarios/3 -> id = 3)
     //    RequestBody recebe o json com os novos dados e transforma em FuncionarioEdicaoDTO
+//    A annotation Valid apenas valida os dados (nesse caso, apenas o numero de telefone)
     public ResponseEntity<FuncionarioResponseDTO> editarFuncionario(@PathVariable Long id, @RequestBody @Valid FuncionarioEdicaoDTO edicaoDTO) {
 //        Chama o service passando o id do funcionario e os novos dados
         FuncionarioResponseDTO alteracaoDTO = funcionarioService.editarFuncionario(id, edicaoDTO);

@@ -29,6 +29,7 @@ public class FuncionarioEdicaoDTO {
 
     @NotNull(message = "O status é obrigatório.")
     private StatusFuncionario statusFuncionario;
+
     @NotNull(message = "O perfil é obrigatório.")
     private PerfilFuncionario perfilFuncionario;
 }
