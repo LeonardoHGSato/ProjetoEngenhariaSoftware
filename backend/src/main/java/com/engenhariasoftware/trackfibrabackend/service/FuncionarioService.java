@@ -103,11 +103,10 @@ public class FuncionarioService {
     @Transactional
 //    Valida se existe funcionario com aquele id e faz o soft delete (altera status para INATIVO)
     public FuncionarioResponseDTO desativarFuncionario(Long id){
-        if(!funcionarioRepository.existsById(id)){
-            throw new RuntimeException("Não há nenhum funcionario cadastrado com esse id");
-        }
 //      Pega os dados do do funcionario e altera o status dele para INATIVO
-        FuncionarioModel funcionarioDesativado = funcionarioRepository.findById(id).get();
+        FuncionarioModel funcionarioDesativado = funcionarioRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Não há nenhum funcionário cadastrado com esse id"));
+
         funcionarioDesativado.setStatusFuncionario(StatusFuncionario.INATIVO);
 //      salva a alteracao no banco de dados
         funcionarioRepository.save(funcionarioDesativado);
