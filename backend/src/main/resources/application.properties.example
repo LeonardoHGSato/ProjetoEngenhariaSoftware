@@ -17,3 +17,6 @@ spring.flyway.locations=classpath:db/migration
 # JWT
 app.jwt.secret-key=troque_por_uma_chave_secreta_com_pelo_menos_256_bits
 app.jwt.expiration-time=86400000
+
+# CORS
+app.cors.allowed-origins=http://localhost:3000
