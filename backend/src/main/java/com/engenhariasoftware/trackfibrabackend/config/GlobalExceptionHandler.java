@@ -32,12 +32,6 @@ public class GlobalExceptionHandler {
         return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
     }
 
-    // Mantido para compatibilidade com o Login
-    @ExceptionHandler(BusinessException.class)
-    public ResponseEntity<String> handleBusinesException(BusinessException ex){
-        return ResponseEntity.status(HttpStatus.CONFLICT).body(ex.getMessage());
-    }
-
     // 400 para erros de validacao
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<Map<String, String>> handleValidacao(MethodArgumentNotValidException ex){

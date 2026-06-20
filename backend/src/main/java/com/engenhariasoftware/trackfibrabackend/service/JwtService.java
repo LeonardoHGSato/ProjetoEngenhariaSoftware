@@ -17,7 +17,7 @@ import java.util.Map;
 @Service
 public class JwtService {
     private static final String SECRET_KEY = "sua-chave-secreta-com-pelo-menos-256-bits-aqui-1234567890";
-    private static final long EXPIRATION_TIME = 86400000;
+    private static final long EXPIRATION_TIME = 86400000; //equivale a um dia (24 horas), mas está em milisegundos
 
     public String gerarToken(UserDetails userDetails){
         Map<String, Object> extraClaims = new HashMap<>();

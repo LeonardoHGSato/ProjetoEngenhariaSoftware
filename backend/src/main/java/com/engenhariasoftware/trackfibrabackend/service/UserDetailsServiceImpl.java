@@ -1,6 +1,5 @@
 package com.engenhariasoftware.trackfibrabackend.service;
 
-import com.engenhariasoftware.trackfibrabackend.config.BusinessException;
 import com.engenhariasoftware.trackfibrabackend.repository.FuncionarioRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
