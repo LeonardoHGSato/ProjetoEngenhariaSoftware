@@ -9,6 +9,7 @@ import lombok.Setter;
 
 @Embeddable
 @Getter
+//TODO: Ao de implementar os chamados, o endereço precisa ser copiado em um novo objeto Endereço, não por referência para não alterar o histórico.
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
