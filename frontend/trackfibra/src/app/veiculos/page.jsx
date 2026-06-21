@@ -5,21 +5,29 @@ import Link from "next/link";
 import AppShell from "@/components/AppShell";
 import RoleRoute from "@/components/RoleRoute";
 import StatusBadge from "@/components/StatusBadge";
+import ConfirmModal from "@/components/ConfirmModal";
 import Loading from "@/components/Loading";
 import ErroEstado from "@/components/ErroEstado";
 import { ROLES } from "@/config/menu";
-import { listarVeiculos } from "@/services/veiculos";
+import { useToast } from "@/context/ToastContext";
+import { listarVeiculos, removerVeiculo } from "@/services/veiculos";
 import styles from "./veiculos.module.css";
 
 const TAMANHO_PAGINA = 10;
 
 export default function VeiculosPage() {
+  const { toast } = useToast();
+
   const [status, setStatus] = useState("");
   const [pagina, setPagina] = useState(0);
 
   const [dados, setDados] = useState(null);
   const [carregando, setCarregando] = useState(true);
   const [erro, setErro] = useState(false);
+
+  // Veículo selecionado para remoção (controla o ConfirmModal).
+  const [aRemover, setARemover] = useState(null);
+  const [removendo, setRemovendo] = useState(false);
 
   const carregar = useCallback(async () => {
     setCarregando(true);
@@ -45,6 +53,21 @@ export default function VeiculosPage() {
   function aoMudarStatus(valor) {
     setStatus(valor);
     setPagina(0);
+  }
+
+  async function confirmarRemocao() {
+    setRemovendo(true);
+    try {
+      await removerVeiculo(aRemover.id);
+      toast.success("Veículo removido.");
+      setARemover(null);
+      carregar();
+    } catch {
+      // Erros (inclusive 409) já são exibidos via toast pelo interceptor de api.
+      setARemover(null);
+    } finally {
+      setRemovendo(false);
+    }
   }
 
   const veiculos = dados?.content ?? [];
@@ -114,6 +137,13 @@ export default function VeiculosPage() {
                         >
                           Editar
                         </Link>
+                        <button
+                          type="button"
+                          className={styles.acaoRemover}
+                          onClick={() => setARemover(v)}
+                        >
+                          Remover
+                        </button>
                       </td>
                     </tr>
                   ))}
@@ -144,6 +174,20 @@ export default function VeiculosPage() {
             )}
           </>
         )}
+
+        <ConfirmModal
+          aberto={Boolean(aRemover)}
+          titulo="Remover veículo"
+          mensagem={
+            aRemover
+              ? `Deseja realmente remover o veículo de placa ${aRemover.placa}?`
+              : ""
+          }
+          textoConfirmar="Remover"
+          carregando={removendo}
+          onConfirmar={confirmarRemocao}
+          onCancelar={() => setARemover(null)}
+        />
       </AppShell>
     </RoleRoute>
   );
