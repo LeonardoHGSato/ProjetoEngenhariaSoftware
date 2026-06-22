@@ -7,6 +7,7 @@ public class ClienteSpecification {
     public static Specification<Cliente> comBusca(String busca){
         return (root, query, cb) -> {
             if (busca == null || busca.isBlank()){
+                return null;
             }
 
             String apenasNumeros = busca.replaceAll("\\D", "");
