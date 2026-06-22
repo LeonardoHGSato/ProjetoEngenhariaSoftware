@@ -26,9 +26,7 @@ jobs:
           java-version: '25'
           cache: maven
 
-      # Testes pulados ate a infra de testes ficar pronta (#33).
-      # Quando a #33 estiver concluida, remover o -DskipTests para rodar os testes.
       - name: Build
         run: |
           chmod +x mvnw
-          ./mvnw -B clean verify -DskipTests
+          ./mvnw -B clean verify
