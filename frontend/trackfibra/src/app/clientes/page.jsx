@@ -11,39 +11,34 @@ import { ROLES } from "@/config/menu";
 import { useToast } from "@/context/ToastContext";
 import { useAsync } from "@/hooks/useAsync";
 import { useDebounce } from "@/hooks/useDebounce";
-import { mascaraTelefone } from "@/lib/masks";
-import {
-  listarFuncionarios,
-  desativarFuncionario,
-} from "@/services/funcionarios";
-import styles from "./funcionarios.module.css";
+import { mascaraCpfCnpj, mascaraTelefone } from "@/lib/masks";
+import { listarClientes, desativarCliente } from "@/services/clientes";
+import styles from "./clientes.module.css";
 
 const TAMANHO_PAGINA = 10;
 
-export default function FuncionariosPage() {
+export default function ClientesPage() {
   const { toast } = useToast();
 
   const [busca, setBusca] = useState("");
-  const [status, setStatus] = useState("");
   const [pagina, setPagina] = useState(0);
 
   const buscaComAtraso = useDebounce(busca, 300);
 
-  // Funcionário selecionado para desativação (controla o ConfirmModal).
+  // Cliente selecionado para desativação (controla o ConfirmModal).
   const [aDesativar, setADesativar] = useState(null);
   const [desativando, setDesativando] = useState(false);
 
   // useAsync cuida do carregamento inicial e refaz a busca sempre que os
   // filtros mudam (a função recriada altera executar e dispara o efeito interno).
-  const buscarFuncionarios = useCallback(
+  const buscarClientes = useCallback(
     () =>
-      listarFuncionarios({
-        nome: buscaComAtraso,
-        status,
+      listarClientes({
+        busca: buscaComAtraso,
         page: pagina,
         size: TAMANHO_PAGINA,
       }),
-    [buscaComAtraso, status, pagina],
+    [buscaComAtraso, pagina],
   );
 
   const {
@@ -51,23 +46,18 @@ export default function FuncionariosPage() {
     erro,
     carregando,
     executar: carregar,
-  } = useAsync(buscarFuncionarios);
+  } = useAsync(buscarClientes);
 
   function aoMudarBusca(valor) {
     setBusca(valor);
     setPagina(0);
   }
 
-  function aoMudarStatus(valor) {
-    setStatus(valor);
-    setPagina(0);
-  }
-
   async function confirmarDesativacao() {
     setDesativando(true);
     try {
-      await desativarFuncionario(aDesativar.id);
-      toast.success("Funcionário desativado.");
+      await desativarCliente(aDesativar.id);
+      toast.success("Cliente desativado.");
       setADesativar(null);
       carregar();
     } catch {
@@ -78,16 +68,16 @@ export default function FuncionariosPage() {
     }
   }
 
-  const funcionarios = dados?.content ?? [];
+  const clientes = dados?.content ?? [];
   const totalPaginas = dados?.totalPages ?? 0;
 
   return (
     <RoleRoute requiredRole={ROLES.supervisor}>
       <AppShell>
         <div className={styles.cabecalho}>
-          <h1>Funcionários</h1>
-          <Link href="/funcionarios/novo" className={styles.botaoNovo}>
-            Novo funcionário
+          <h1>Clientes</h1>
+          <Link href="/clientes/novo" className={styles.botaoNovo}>
+            Novo cliente
           </Link>
         </div>
 
@@ -95,30 +85,21 @@ export default function FuncionariosPage() {
           <input
             type="search"
             className={styles.busca}
-            placeholder="Buscar por nome..."
+            placeholder="Buscar por nome ou CPF/CNPJ..."
             value={busca}
             onChange={(e) => aoMudarBusca(e.target.value)}
           />
-          <select
-            className={styles.select}
-            value={status}
-            onChange={(e) => aoMudarStatus(e.target.value)}
-          >
-            <option value="">Todos os status</option>
-            <option value="ATIVO">Ativos</option>
-            <option value="INATIVO">Inativos</option>
-          </select>
         </div>
 
         {carregando ? (
-          <Loading mensagem="Carregando funcionários..." />
+          <Loading mensagem="Carregando clientes..." />
         ) : erro ? (
           <ErroEstado
-            mensagem="Não foi possível carregar os funcionários."
+            mensagem="Não foi possível carregar os clientes."
             onRetry={carregar}
           />
-        ) : funcionarios.length === 0 ? (
-          <p className={styles.vazio}>Nenhum funcionário encontrado.</p>
+        ) : clientes.length === 0 ? (
+          <p className={styles.vazio}>Nenhum cliente encontrado.</p>
         ) : (
           <>
             <div className={styles.tabelaWrapper}>
@@ -126,41 +107,41 @@ export default function FuncionariosPage() {
                 <thead>
                   <tr>
                     <th>Nome</th>
-                    <th>E-mail</th>
+                    <th>CPF/CNPJ</th>
                     <th>Telefone</th>
+                    <th>Cidade</th>
                     <th>Status</th>
                     <th aria-label="Ações" />
                   </tr>
                 </thead>
                 <tbody>
-                  {funcionarios.map((f) => (
-                    <tr key={f.id}>
-                      <td>{f.nome}</td>
-                      <td>{f.email}</td>
-                      <td>{mascaraTelefone(f.numeroTelefone)}</td>
+                  {clientes.map((c) => (
+                    <tr key={c.id}>
+                      <td>{c.nome}</td>
+                      <td>{mascaraCpfCnpj(c.cpfCnpj)}</td>
+                      <td>{mascaraTelefone(c.telefone)}</td>
+                      <td>{c.cidade}</td>
                       <td>
                         <span
                           className={`${styles.badge} ${
-                            f.statusFuncionario === "ATIVO"
-                              ? styles.ativo
-                              : styles.inativo
+                            c.status === "ATIVO" ? styles.ativo : styles.inativo
                           }`}
                         >
-                          {f.statusFuncionario === "ATIVO" ? "Ativo" : "Inativo"}
+                          {c.status === "ATIVO" ? "Ativo" : "Inativo"}
                         </span>
                       </td>
                       <td className={styles.acoes}>
                         <Link
-                          href={`/funcionarios/${f.id}/editar`}
+                          href={`/clientes/${c.id}/editar`}
                           className={styles.acaoEditar}
                         >
                           Editar
                         </Link>
-                        {f.statusFuncionario === "ATIVO" && (
+                        {c.status === "ATIVO" && (
                           <button
                             type="button"
                             className={styles.acaoDesativar}
-                            onClick={() => setADesativar(f)}
+                            onClick={() => setADesativar(c)}
                           >
                             Desativar
                           </button>
@@ -198,7 +179,7 @@ export default function FuncionariosPage() {
 
         <ConfirmModal
           aberto={Boolean(aDesativar)}
-          titulo="Desativar funcionário"
+          titulo="Desativar cliente"
           mensagem={
             aDesativar ? `Deseja realmente desativar ${aDesativar.nome}?` : ""
           }

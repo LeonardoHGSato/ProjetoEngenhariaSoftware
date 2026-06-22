@@ -5,39 +5,41 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import RoleRoute from "@/components/RoleRoute";
-import VeiculoForm from "@/components/VeiculoForm";
+import ClienteForm from "@/components/ClienteForm";
 import Loading from "@/components/Loading";
 import ErroEstado from "@/components/ErroEstado";
 import { ROLES } from "@/config/menu";
 import { useToast } from "@/context/ToastContext";
 import { useAsync } from "@/hooks/useAsync";
-import { buscarVeiculo, editarVeiculo } from "@/services/veiculos";
-import styles from "../../veiculos.module.css";
+import { buscarCliente, editarCliente } from "@/services/clientes";
+import styles from "../../clientes.module.css";
 
-export default function EditarVeiculoPage() {
+export default function EditarClientePage() {
   const router = useRouter();
   const { toast } = useToast();
   const { id } = useParams();
 
   const [enviando, setEnviando] = useState(false);
 
-  const carregarVeiculo = useCallback(() => buscarVeiculo(id), [id]);
+  // Busca o cliente completo (com e-mail e endereço) para pré-preencher o
+  // formulário, usando GET /api/v1/clientes/{id}.
+  const carregarCliente = useCallback(() => buscarCliente(id), [id]);
 
   const {
-    dados: veiculo,
+    dados: cliente,
     erro,
     carregando,
     executar: carregar,
-  } = useAsync(carregarVeiculo);
+  } = useAsync(carregarCliente);
 
   async function handleSubmit(payload) {
     setEnviando(true);
     try {
-      await editarVeiculo(id, payload);
-      toast.success("Veículo atualizado.");
-      router.push("/veiculos");
+      await editarCliente(id, payload);
+      toast.success("Cliente atualizado.");
+      router.push("/clientes");
     } catch {
-      // Erros já são exibidos via toast pelo interceptor de api.
+      // Erros (inclusive 409) já são exibidos via toast pelo interceptor de api.
       setEnviando(false);
     }
   }
@@ -46,23 +48,23 @@ export default function EditarVeiculoPage() {
     <RoleRoute requiredRole={ROLES.supervisor}>
       <AppShell>
         <div className={styles.cabecalho}>
-          <h1>Editar veículo</h1>
-          <Link href="/veiculos" className={styles.acaoEditar}>
+          <h1>Editar cliente</h1>
+          <Link href="/clientes" className={styles.acaoEditar}>
             Voltar
           </Link>
         </div>
 
         {carregando ? (
-          <Loading mensagem="Carregando veículo..." />
+          <Loading mensagem="Carregando cliente..." />
         ) : erro ? (
           <ErroEstado
-            mensagem="Não foi possível carregar o veículo."
+            mensagem="Não foi possível carregar o cliente."
             onRetry={carregar}
           />
         ) : (
-          <VeiculoForm
+          <ClienteForm
             modo="editar"
-            valoresIniciais={veiculo}
+            valoresIniciais={cliente}
             onSubmit={handleSubmit}
             enviando={enviando}
           />

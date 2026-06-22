@@ -1,0 +1,15 @@
+CREATE TABLE clientes (
+    id BIGSERIAL PRIMARY KEY,
+    nome VARCHAR(150) NOT NULL,
+    cpf_cnpj VARCHAR(14) NOT NULL UNIQUE,
+    telefone VARCHAR(11) NOT NULL,
+    email VARCHAR(254),
+    status VARCHAR(20) NOT NULL DEFAULT 'ATIVO',
+    cep VARCHAR(8) NOT NULL,
+    rua VARCHAR(150) NOT NULL,
+    numero VARCHAR(20) NOT NULL,
+    complemento VARCHAR(100),
+    bairro VARCHAR(100) NOT NULL,
+    cidade VARCHAR(100) NOT NULL,
+    uf CHAR(2) NOT NULL
+);

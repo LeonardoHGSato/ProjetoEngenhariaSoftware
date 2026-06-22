@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import AppShell from "@/components/AppShell";
@@ -10,6 +10,7 @@ import Loading from "@/components/Loading";
 import ErroEstado from "@/components/ErroEstado";
 import { ROLES } from "@/config/menu";
 import { useToast } from "@/context/ToastContext";
+import { useAsync } from "@/hooks/useAsync";
 import {
   editarFuncionario,
   listarFuncionarios,
@@ -21,38 +22,25 @@ export default function EditarFuncionarioPage() {
   const { toast } = useToast();
   const { id } = useParams();
 
-  const [funcionario, setFuncionario] = useState(null);
-  const [carregando, setCarregando] = useState(true);
-  const [erro, setErro] = useState(false);
   const [enviando, setEnviando] = useState(false);
 
   // Enquanto o backend não expõe GET /api/v1/funcionarios/{id}, buscamos o
   // funcionário na listagem e localizamos pelo id. A listagem não traz o
   // perfilFuncionario, então ele assume o padrão do form (editável).
   // TODO: trocar por uma busca direta quando o endpoint GET /{id} existir.
-  const carregar = useCallback(async () => {
-    setCarregando(true);
-    setErro(false);
-    try {
-      const page = await listarFuncionarios({ size: 1000 });
-      const encontrado = page.content.find((f) => String(f.id) === String(id));
-      if (!encontrado) {
-        setErro(true);
-        return;
-      }
-      setFuncionario(encontrado);
-    } catch {
-      setErro(true);
-    } finally {
-      setCarregando(false);
-    }
+  const buscarFuncionario = useCallback(async () => {
+    const page = await listarFuncionarios({ size: 1000 });
+    const encontrado = page.content.find((f) => String(f.id) === String(id));
+    if (!encontrado) throw new Error("Funcionário não encontrado");
+    return encontrado;
   }, [id]);
 
-  useEffect(() => {
-    // Carregamento inicial dos dados (fetch on mount); o setState sincrono no inicio de carregar() e intencional.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    carregar();
-  }, [carregar]);
+  const {
+    dados: funcionario,
+    erro,
+    carregando,
+    executar: carregar,
+  } = useAsync(buscarFuncionario);
 
   async function handleSubmit(payload) {
     setEnviando(true);
