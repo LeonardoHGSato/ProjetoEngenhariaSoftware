@@ -14,7 +14,7 @@ public class ViaCepService {
         //        \\D remove pontuação
         String cepLimpo = cep.replaceAll("\\D", "");
 
-        ViaCepResponseDTO resposta = restClient.get().uri("/{cep}json/", cepLimpo)
+        ViaCepResponseDTO resposta = restClient.get().uri("/{cep}/json/", cepLimpo)
                 .retrieve()
                 .body(ViaCepResponseDTO.class);
 

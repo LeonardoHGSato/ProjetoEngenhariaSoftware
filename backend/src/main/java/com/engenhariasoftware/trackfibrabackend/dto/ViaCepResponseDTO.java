@@ -10,7 +10,7 @@ import lombok.Setter;
 public class ViaCepResponseDTO {
     private String cep;
     private String logradouro;
-    private String bairo;
+    private String bairro;
     private String localidade;
     private String uf;
     private boolean erro;

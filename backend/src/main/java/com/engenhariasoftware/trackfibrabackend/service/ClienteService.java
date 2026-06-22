@@ -46,7 +46,8 @@ public class ClienteService {
     }
 
     public Page<ClienteListagemDTO> listarClientes(String busca, Pageable pageable){
-        Specification<Cliente> filtro = ClienteSpecification.comBusca(busca);
+        Specification<Cliente> filtro = Specification.allOf(ClienteSpecification.comBusca(busca),
+                (root, query, cb) -> cb.equal(root.get("status"), StatusCliente.ATIVO));
         Page<Cliente> clientes = clienteRepository.findAll(filtro, pageable);
         return clientes.map(ClienteListagemDTO::new);
     }
@@ -91,8 +92,8 @@ public class ClienteService {
                 enderecoViaCep.getLogradouro(),
                 enderecoDTO.numero(),
                 enderecoDTO.complemento(),
-                enderecoViaCep.getBairo(),
-                enderecoViaCep.getLogradouro(),
+                enderecoViaCep.getBairro(),
+                enderecoViaCep.getLocalidade(),
                 enderecoViaCep.getUf()
         );
     }
