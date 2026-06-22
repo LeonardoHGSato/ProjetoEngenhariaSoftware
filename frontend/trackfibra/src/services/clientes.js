@@ -16,6 +16,13 @@ export async function listarClientes({ busca, page = 0, size = 10 } = {}) {
   return data;
 }
 
+// Busca um cliente pelo id. Retorna o ClienteResponseDTO completo (com e-mail e
+// endereço), usado para pré-preencher o formulário de edição.
+export async function buscarCliente(id) {
+  const { data } = await api.get(`${BASE}/${id}`);
+  return data;
+}
+
 // Cadastra um cliente. Payload: { nome, cpfCnpj, telefone, email, endereco }.
 export async function cadastrarCliente(payload) {
   const { data } = await api.post(BASE, payload);
