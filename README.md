@@ -52,3 +52,46 @@ cp src/main/resources/application.properties.example src/main/resources/applicat
 ```
 
 Com o banco do compose no ar, o backend conecta sem ajustes adicionais.
+
+### Frontend
+
+```bash
+cd frontend/trackfibra
+npm install
+npm run dev
+```
+
+A aplicação sobe em `http://localhost:3000` e consome a API em `http://localhost:8080`
+(configurável via `NEXT_PUBLIC_API_URL`).
+
+## Testes
+
+### Frontend
+
+A base de testes usa **Vitest** + **@testing-library/react** rodando em **jsdom**.
+
+```bash
+cd frontend/trackfibra
+npm test           # roda a suíte uma vez
+npm run test:watch # modo watch durante o desenvolvimento
+```
+
+Para criar um novo teste, adicione um arquivo `*.test.jsx` ao lado do componente
+(ou em `__tests__/`) e use o teste de exemplo como molde: renderize com `render(...)`
+do Testing Library e faça as asserções com os matchers de `@testing-library/jest-dom`.
+
+### Backend
+
+As dependências de teste (**JUnit 5** + **Mockito**, via `spring-boot-starter-test`) já
+estão disponíveis e há um teste de carga de contexto de exemplo
+(`TrackFibraBackEndApplicationTests`). A base completa — banco de teste isolado e perfil
+`application-test`, sem tocar no banco de desenvolvimento — está sendo configurada na #33;
+até lá o CI do backend roda com os testes pulados (`-DskipTests`).
+
+```bash
+cd backend
+./mvnw test
+```
+
+Para criar um novo teste, adicione uma classe em `src/test/java/...` espelhando o
+pacote da classe testada.
