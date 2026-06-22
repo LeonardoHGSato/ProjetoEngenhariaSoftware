@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import Link from "next/link";
 import AppShell from "@/components/AppShell";
 import RoleRoute from "@/components/RoleRoute";
@@ -10,6 +10,7 @@ import Loading from "@/components/Loading";
 import ErroEstado from "@/components/ErroEstado";
 import { ROLES } from "@/config/menu";
 import { useToast } from "@/context/ToastContext";
+import { useAsync } from "@/hooks/useAsync";
 import { listarVeiculos, removerVeiculo } from "@/services/veiculos";
 import styles from "./veiculos.module.css";
 
@@ -21,35 +22,28 @@ export default function VeiculosPage() {
   const [status, setStatus] = useState("");
   const [pagina, setPagina] = useState(0);
 
-  const [dados, setDados] = useState(null);
-  const [carregando, setCarregando] = useState(true);
-  const [erro, setErro] = useState(false);
-
   // Veículo selecionado para remoção (controla o ConfirmModal).
   const [aRemover, setARemover] = useState(null);
   const [removendo, setRemovendo] = useState(false);
 
-  const carregar = useCallback(async () => {
-    setCarregando(true);
-    setErro(false);
-    try {
-      const page = await listarVeiculos({
+  // useAsync cuida do carregamento inicial e refaz a busca sempre que os
+  // filtros mudam (a função recriada altera executar e dispara o efeito interno).
+  const buscarVeiculos = useCallback(
+    () =>
+      listarVeiculos({
         status,
         page: pagina,
         size: TAMANHO_PAGINA,
-      });
-      setDados(page);
-    } catch {
-      setErro(true);
-    } finally {
-      setCarregando(false);
-    }
-  }, [status, pagina]);
+      }),
+    [status, pagina],
+  );
 
-  useEffect(() => {
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    carregar();
-  }, [carregar]);
+  const {
+    dados,
+    erro,
+    carregando,
+    executar: carregar,
+  } = useAsync(buscarVeiculos);
 
   function aoMudarStatus(valor) {
     setStatus(valor);

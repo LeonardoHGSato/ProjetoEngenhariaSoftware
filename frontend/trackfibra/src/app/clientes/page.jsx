@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import Link from "next/link";
 import AppShell from "@/components/AppShell";
 import RoleRoute from "@/components/RoleRoute";
@@ -9,6 +9,7 @@ import Loading from "@/components/Loading";
 import ErroEstado from "@/components/ErroEstado";
 import { ROLES } from "@/config/menu";
 import { useToast } from "@/context/ToastContext";
+import { useAsync } from "@/hooks/useAsync";
 import { useDebounce } from "@/hooks/useDebounce";
 import { mascaraCpfCnpj, mascaraTelefone } from "@/lib/masks";
 import { listarClientes, desativarCliente } from "@/services/clientes";
@@ -24,36 +25,28 @@ export default function ClientesPage() {
 
   const buscaComAtraso = useDebounce(busca, 300);
 
-  const [dados, setDados] = useState(null);
-  const [carregando, setCarregando] = useState(true);
-  const [erro, setErro] = useState(false);
-
   // Cliente selecionado para desativação (controla o ConfirmModal).
   const [aDesativar, setADesativar] = useState(null);
   const [desativando, setDesativando] = useState(false);
 
-  const carregar = useCallback(async () => {
-    setCarregando(true);
-    setErro(false);
-    try {
-      const page = await listarClientes({
+  // useAsync cuida do carregamento inicial e refaz a busca sempre que os
+  // filtros mudam (a função recriada altera executar e dispara o efeito interno).
+  const buscarClientes = useCallback(
+    () =>
+      listarClientes({
         busca: buscaComAtraso,
         page: pagina,
         size: TAMANHO_PAGINA,
-      });
-      setDados(page);
-    } catch {
-      setErro(true);
-    } finally {
-      setCarregando(false);
-    }
-  }, [buscaComAtraso, pagina]);
+      }),
+    [buscaComAtraso, pagina],
+  );
 
-  useEffect(() => {
-    // Carregamento inicial / refetch ao mudar filtros (fetch on mount); o setState sincrono no inicio de carregar() e intencional.
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    carregar();
-  }, [carregar]);
+  const {
+    dados,
+    erro,
+    carregando,
+    executar: carregar,
+  } = useAsync(buscarClientes);
 
   function aoMudarBusca(valor) {
     setBusca(valor);
