@@ -5,51 +5,49 @@ import Link from "next/link";
 import { useParams, useRouter } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import RoleRoute from "@/components/RoleRoute";
-import FuncionarioForm from "@/components/FuncionarioForm";
+import ClienteForm from "@/components/ClienteForm";
 import Loading from "@/components/Loading";
 import ErroEstado from "@/components/ErroEstado";
 import { ROLES } from "@/config/menu";
 import { useToast } from "@/context/ToastContext";
 import { useAsync } from "@/hooks/useAsync";
-import {
-  editarFuncionario,
-  listarFuncionarios,
-} from "@/services/funcionarios";
-import styles from "../../funcionarios.module.css";
+import { editarCliente, listarClientes } from "@/services/clientes";
+import styles from "../../clientes.module.css";
 
-export default function EditarFuncionarioPage() {
+export default function EditarClientePage() {
   const router = useRouter();
   const { toast } = useToast();
   const { id } = useParams();
 
   const [enviando, setEnviando] = useState(false);
 
-  // Enquanto o backend não expõe GET /api/v1/funcionarios/{id}, buscamos o
-  // funcionário na listagem e localizamos pelo id. A listagem não traz o
-  // perfilFuncionario, então ele assume o padrão do form (editável).
+  // O backend ainda não expõe um GET /api/v1/clientes/{id} utilizável, então
+  // buscamos o cliente na listagem e localizamos pelo id. A listagem não traz
+  // endereço/e-mail completos, então o formulário começa só com nome, telefone
+  // e CPF/CNPJ; os demais campos são preenchidos pelo usuário (CEP via ViaCEP).
   // TODO: trocar por uma busca direta quando o endpoint GET /{id} existir.
-  const buscarFuncionario = useCallback(async () => {
-    const page = await listarFuncionarios({ size: 1000 });
-    const encontrado = page.content.find((f) => String(f.id) === String(id));
-    if (!encontrado) throw new Error("Funcionário não encontrado");
+  const buscarCliente = useCallback(async () => {
+    const page = await listarClientes({ size: 1000 });
+    const encontrado = page.content.find((c) => String(c.id) === String(id));
+    if (!encontrado) throw new Error("Cliente não encontrado");
     return encontrado;
   }, [id]);
 
   const {
-    dados: funcionario,
+    dados: cliente,
     erro,
     carregando,
     executar: carregar,
-  } = useAsync(buscarFuncionario);
+  } = useAsync(buscarCliente);
 
   async function handleSubmit(payload) {
     setEnviando(true);
     try {
-      await editarFuncionario(id, payload);
-      toast.success("Funcionário atualizado.");
-      router.push("/funcionarios");
+      await editarCliente(id, payload);
+      toast.success("Cliente atualizado.");
+      router.push("/clientes");
     } catch {
-      // Erros já são exibidos via toast pelo interceptor de api.
+      // Erros (inclusive 409) já são exibidos via toast pelo interceptor de api.
       setEnviando(false);
     }
   }
@@ -58,23 +56,23 @@ export default function EditarFuncionarioPage() {
     <RoleRoute requiredRole={ROLES.supervisor}>
       <AppShell>
         <div className={styles.cabecalho}>
-          <h1>Editar funcionário</h1>
-          <Link href="/funcionarios" className={styles.acaoEditar}>
+          <h1>Editar cliente</h1>
+          <Link href="/clientes" className={styles.acaoEditar}>
             Voltar
           </Link>
         </div>
 
         {carregando ? (
-          <Loading mensagem="Carregando funcionário..." />
+          <Loading mensagem="Carregando cliente..." />
         ) : erro ? (
           <ErroEstado
-            mensagem="Não foi possível carregar o funcionário."
+            mensagem="Não foi possível carregar o cliente."
             onRetry={carregar}
           />
         ) : (
-          <FuncionarioForm
+          <ClienteForm
             modo="editar"
-            valoresIniciais={funcionario}
+            valoresIniciais={cliente}
             onSubmit={handleSubmit}
             enviando={enviando}
           />
