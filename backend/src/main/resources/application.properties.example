@@ -1,7 +1,7 @@
 # Conexão com o banco
 spring.datasource.url=jdbc:postgresql://localhost:5432/trackfibra
-spring.datasource.username=seu_usuario
-spring.datasource.password=sua_senha
+spring.datasource.username=trackfibra
+spring.datasource.password=trackfibra
 spring.datasource.driver-class-name=org.postgresql.Driver
 
 # JPA
