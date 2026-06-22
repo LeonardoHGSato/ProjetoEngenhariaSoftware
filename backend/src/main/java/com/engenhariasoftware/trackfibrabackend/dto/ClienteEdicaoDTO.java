@@ -20,6 +20,4 @@ public record ClienteEdicaoDTO(
         @NotNull(message = "O endereço é obrigatório")
         @Valid
         EnderecoDTO endereco
-){
-}
-
+){}
