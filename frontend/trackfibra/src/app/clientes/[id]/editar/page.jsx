@@ -11,7 +11,7 @@ import ErroEstado from "@/components/ErroEstado";
 import { ROLES } from "@/config/menu";
 import { useToast } from "@/context/ToastContext";
 import { useAsync } from "@/hooks/useAsync";
-import { editarCliente, listarClientes } from "@/services/clientes";
+import { buscarCliente, editarCliente } from "@/services/clientes";
 import styles from "../../clientes.module.css";
 
 export default function EditarClientePage() {
@@ -21,24 +21,16 @@ export default function EditarClientePage() {
 
   const [enviando, setEnviando] = useState(false);
 
-  // O backend ainda não expõe um GET /api/v1/clientes/{id} utilizável, então
-  // buscamos o cliente na listagem e localizamos pelo id. A listagem não traz
-  // endereço/e-mail completos, então o formulário começa só com nome, telefone
-  // e CPF/CNPJ; os demais campos são preenchidos pelo usuário (CEP via ViaCEP).
-  // TODO: trocar por uma busca direta quando o endpoint GET /{id} existir.
-  const buscarCliente = useCallback(async () => {
-    const page = await listarClientes({ size: 1000 });
-    const encontrado = page.content.find((c) => String(c.id) === String(id));
-    if (!encontrado) throw new Error("Cliente não encontrado");
-    return encontrado;
-  }, [id]);
+  // Busca o cliente completo (com e-mail e endereço) para pré-preencher o
+  // formulário, usando GET /api/v1/clientes/{id}.
+  const carregarCliente = useCallback(() => buscarCliente(id), [id]);
 
   const {
     dados: cliente,
     erro,
     carregando,
     executar: carregar,
-  } = useAsync(buscarCliente);
+  } = useAsync(carregarCliente);
 
   async function handleSubmit(payload) {
     setEnviando(true);
