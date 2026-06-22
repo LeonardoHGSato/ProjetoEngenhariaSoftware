@@ -30,3 +30,21 @@ export function mascaraCpf(valor) {
     .replace(/(\d{3})(\d)/, "$1.$2")
     .replace(/(\d{3})(\d{1,2})$/, "$1-$2");
 }
+
+// Padrão de placa aceito pelo backend: 3 letras + 1 dígito + 1 alfanumérico + 2 dígitos.
+// Cobre o formato antigo (ABC1234) e o Mercosul (ABC1D23).
+const PLACA_REGEX = /^[A-Z]{3}[0-9][A-Z0-9][0-9]{2}$/;
+
+// Normaliza a placa para exibição: maiúsculas, sem separadores, até 7 caracteres.
+// A placa não usa hífen nos padrões brasileiros, então a máscara só limpa e limita.
+export function mascaraPlaca(valor) {
+  return (valor ?? "")
+    .toUpperCase()
+    .replace(/[^A-Z0-9]/g, "")
+    .slice(0, 7);
+}
+
+// Valida a placa contra o padrão antigo/Mercosul (espelha a validação do backend).
+export function placaValida(valor) {
+  return PLACA_REGEX.test(mascaraPlaca(valor));
+}

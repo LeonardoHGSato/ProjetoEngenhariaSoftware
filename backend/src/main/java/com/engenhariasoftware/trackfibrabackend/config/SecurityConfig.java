@@ -36,6 +36,11 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/v1/auth/login").permitAll()
                         .requestMatchers("/api/v1/funcionarios/**").hasRole("SUPERVISOR")
+
+                        // CRUD de Veículos restrito a SUPERVISOR
+                        .requestMatchers("/api/v1/carros/**").hasRole("SUPERVISOR")
+
+                        // Qualquer outra rota do sistema exigirá que o usuário esteja logado
                         .anyRequest().authenticated()
                 )
 
