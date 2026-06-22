@@ -23,4 +23,32 @@ O sistema permite o controle completo das operações de campo de um provedor de
 
 ## Como executar
 
-A adicionar...
+### Banco de dados (Docker)
+
+O Postgres de desenvolvimento sobe via Docker Compose, sem precisar instalar o banco na máquina:
+
+```bash
+docker compose up -d
+```
+
+Isso cria um Postgres na porta `5432`, com banco/usuário/senha `trackfibra` e os dados
+persistidos no volume `trackfibra_pgdata`. Para acompanhar os logs ou derrubar o banco:
+
+```bash
+docker compose logs -f postgres   # acompanha os logs
+docker compose down               # para o banco (mantém os dados)
+docker compose down -v            # para e apaga os dados do volume
+```
+
+As credenciais padrão já batem com o `application.properties.example`. Para sobrescrevê-las,
+copie `.env.example` para `.env` e ajuste os valores antes de subir o compose.
+
+### Backend
+
+```bash
+cd backend
+cp src/main/resources/application.properties.example src/main/resources/application.properties
+./mvnw spring-boot:run
+```
+
+Com o banco do compose no ar, o backend conecta sem ajustes adicionais.
