@@ -39,6 +39,9 @@ public class SecurityConfig {
                         // CRUD de Funcionários restrito a SUPERVISOR (Critério da Issue 3)
                         .requestMatchers("/api/v1/funcionarios/**").hasRole("SUPERVISOR")
 
+                        // CRUD de Veículos restrito a SUPERVISOR
+                        .requestMatchers("/api/v1/carros/**").hasRole("SUPERVISOR")
+
                         // Qualquer outra rota do sistema exigirá que o usuário esteja logado
                         .anyRequest().authenticated()
                 )
