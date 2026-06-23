@@ -38,6 +38,7 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/funcionarios/**").hasRole("SUPERVISOR")
                         .requestMatchers("/api/v1/carros/**").hasRole("SUPERVISOR")
                         .requestMatchers("/api/v1/clientes/**").hasRole("SUPERVISOR")
+                        .requestMatchers("/api/v1/chamadas/**").hasRole("SUPERVISOR")
 
                         // Qualquer outra rota do sistema exigirá que o usuário esteja logado
                         .anyRequest().authenticated()
