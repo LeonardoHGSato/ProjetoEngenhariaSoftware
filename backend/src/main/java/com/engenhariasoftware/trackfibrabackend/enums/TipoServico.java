@@ -1,5 +1,6 @@
 package com.engenhariasoftware.trackfibrabackend.enums;
 
+import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonFormat;
 
 @JsonFormat(shape = JsonFormat.Shape.OBJECT)
@@ -32,5 +33,13 @@ public enum TipoServico {
     }
     public Integer getTempoMedioMinutos(){
         return tempoMedioMinutos;
+    }
+
+    @JsonCreator(mode = JsonCreator.Mode.DELEGATING)
+    public static TipoServico fromId(String id) {
+        if (id == null) {
+            return null;
+        }
+        return TipoServico.valueOf(id.trim().toUpperCase());
     }
 }
