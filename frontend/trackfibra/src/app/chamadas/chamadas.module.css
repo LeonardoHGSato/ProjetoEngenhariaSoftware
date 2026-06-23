@@ -1,0 +1,39 @@
+.cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+}
+
+.botaoNovo {
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  background: #171717;
+  color: #ffffff;
+  font-size: 0.875rem;
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.botaoNovo:hover {
+  opacity: 0.9;
+}
+
+.acaoVoltar {
+  color: #2563eb;
+  font-weight: 600;
+}
+
+.vazio {
+  color: #777777;
+  padding: 2rem 0;
+  text-align: center;
+}
+
+@media (prefers-color-scheme: dark) {
+  .botaoNovo {
+    background: #ededed;
+    color: #171717;
+  }
+}
