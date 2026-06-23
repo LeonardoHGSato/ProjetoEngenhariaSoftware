@@ -27,11 +27,7 @@ public class ChamadaService {
     private final CarroRepository carroRepository;
     private final List<TipoChamadaStrategy> strategies;
 
-    public ChamadaService(ChamadaRepository chamadaRepository,
-                          ClienteRepository clienteRepository,
-                          FuncionarioRepository funcionarioRepository,
-                          CarroRepository carroRepository,
-                          List<TipoChamadaStrategy> strategies) {
+    public ChamadaService(ChamadaRepository chamadaRepository, ClienteRepository clienteRepository, FuncionarioRepository funcionarioRepository, CarroRepository carroRepository, List<TipoChamadaStrategy> strategies) {
         this.chamadaRepository = chamadaRepository;
         this.clienteRepository = clienteRepository;
         this.funcionarioRepository = funcionarioRepository;
