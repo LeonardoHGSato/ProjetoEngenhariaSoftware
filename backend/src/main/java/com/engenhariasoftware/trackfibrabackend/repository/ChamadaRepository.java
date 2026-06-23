@@ -3,13 +3,12 @@ package com.engenhariasoftware.trackfibrabackend.repository;
 import com.engenhariasoftware.trackfibrabackend.enums.StatusChamada;
 import com.engenhariasoftware.trackfibrabackend.model.Chamada;
 import org.springframework.data.jpa.repository.JpaRepository;
-
+import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.time.LocalDateTime;
 import java.util.List;
 
-public interface ChamadaRepository extends JpaRepository<Chamada, Long> {
+public interface ChamadaRepository extends JpaRepository<Chamada, Long>, JpaSpecificationExecutor<Chamada> {
 
-    // Para o conflito de horário do funcionário (janela de 1h)
     List<Chamada> findByFuncionarioIdAndStatusAndDataHoraBetween(
             Long funcionarioId,
             StatusChamada status,

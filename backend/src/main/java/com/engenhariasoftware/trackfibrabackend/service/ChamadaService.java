@@ -1,18 +1,22 @@
 package com.engenhariasoftware.trackfibrabackend.service;
 
+import com.engenhariasoftware.trackfibrabackend.dto.ChamadaListagemDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.ChamadaRequestDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.ChamadaResponseDTO;
+import com.engenhariasoftware.trackfibrabackend.enums.PerfilFuncionario;
 import com.engenhariasoftware.trackfibrabackend.enums.StatusCarro;
 import com.engenhariasoftware.trackfibrabackend.enums.StatusChamada;
+import com.engenhariasoftware.trackfibrabackend.enums.TipoServico;
 import com.engenhariasoftware.trackfibrabackend.exception.ConflitoException;
 import com.engenhariasoftware.trackfibrabackend.exception.RecursoNaoEncontradoException;
 import com.engenhariasoftware.trackfibrabackend.model.*;
-import com.engenhariasoftware.trackfibrabackend.repository.CarroRepository;
-import com.engenhariasoftware.trackfibrabackend.repository.ChamadaRepository;
-import com.engenhariasoftware.trackfibrabackend.repository.ClienteRepository;
-import com.engenhariasoftware.trackfibrabackend.repository.FuncionarioRepository;
+import com.engenhariasoftware.trackfibrabackend.repository.*;
 import com.engenhariasoftware.trackfibrabackend.service.strategy.TipoChamadaStrategy;
 import jakarta.transaction.Transactional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -94,5 +98,31 @@ public class ChamadaService {
 
         Chamada chamadaSalva = chamadaRepository.save(chamada);
         return new ChamadaResponseDTO(chamadaSalva);
+    }
+
+    public Page<ChamadaListagemDTO> listarChamadas(
+            StatusChamada status, TipoServico tipoServico, Long funcionarioId,
+            LocalDateTime inicio, LocalDateTime fim,
+            FuncionarioModel usuarioLogado, Pageable pageable) {
+
+        Long filtroFuncionarioId = funcionarioId;
+        int tamanhoPagina = 20;
+
+        if (usuarioLogado.getPerfilFuncionario() == PerfilFuncionario.TECNICO) {
+            filtroFuncionarioId = usuarioLogado.getId();
+            tamanhoPagina = 10;
+        }
+
+        Pageable paginacaoComRegra = PageRequest.of(pageable.getPageNumber(), tamanhoPagina, pageable.getSort());
+
+        Specification<Chamada> filtros = Specification.allOf(
+                ChamadaSpecification.comStatus(status),
+                ChamadaSpecification.comTipoServico(tipoServico),
+                ChamadaSpecification.comFuncionario(filtroFuncionarioId),
+                ChamadaSpecification.aPartirDe(inicio),
+                ChamadaSpecification.ate(fim)
+        );
+
+        return chamadaRepository.findAll(filtros, paginacaoComRegra).map(ChamadaListagemDTO::new);
     }
 }
