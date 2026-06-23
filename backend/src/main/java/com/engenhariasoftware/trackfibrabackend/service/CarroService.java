@@ -5,8 +5,10 @@ import com.engenhariasoftware.trackfibrabackend.dto.CarroRequestDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.CarroResponseDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.CarroUpdateDTO;
 import com.engenhariasoftware.trackfibrabackend.enums.StatusCarro;
+import com.engenhariasoftware.trackfibrabackend.enums.StatusChamada;
 import com.engenhariasoftware.trackfibrabackend.model.Carro;
 import com.engenhariasoftware.trackfibrabackend.repository.CarroRepository;
+import com.engenhariasoftware.trackfibrabackend.repository.ChamadaRepository;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -17,9 +19,11 @@ import org.springframework.web.server.ResponseStatusException;
 public class CarroService {
 
     private final CarroRepository carroRepository;
+    private final ChamadaRepository chamadaRepository;
 
-    public CarroService(CarroRepository carroRepository) {
+    public CarroService(CarroRepository carroRepository, ChamadaRepository chamadaRepository) {
         this.carroRepository = carroRepository;
+        this.chamadaRepository = chamadaRepository;
     }
 
     public CarroResponseDTO cadastrar(CarroRequestDTO dto) {
@@ -72,7 +76,6 @@ public class CarroService {
     public CarroResponseDTO buscarPorId(Long id){
 
         Carro carro = carroRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Carro não encontrado"));
-        //TODO: falta incluir chamada ativa quando a entidade Chamada for criada
         return new CarroResponseDTO(
                 carro.getId(),
                 carro.getPlaca(),
@@ -90,7 +93,10 @@ public class CarroService {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "O ano do carro não pode ser no futuro");
         }
 
-        //TODO: bloquear a atualização para MANUTENÇÃO se a chamada estiver ABERTA
+        if (dto.status() == StatusCarro.MANUTENCAO
+                && chamadaRepository.existsByCarroIdAndStatus(id, StatusChamada.ABERTA)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Não é possível colocar em manutenção um carro com chamada em aberto.");
+        }
 
         carro.setModelo(dto.modelo());
         carro.setMarca(dto.marca());
@@ -114,7 +120,9 @@ public class CarroService {
     public void remover(Long id){
         Carro carro = carroRepository.findById(id).orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Carro não encontrado"));
 
-        //TODO: retornar 409 se o carro tiver chamada ABERTA
+        if (chamadaRepository.existsByCarroIdAndStatus(id, StatusChamada.ABERTA)) {
+            throw new ResponseStatusException(HttpStatus.CONFLICT, "Não é possível remover um carro com chamada em aberto.");
+        }
 
         carro.setStatus(StatusCarro.DESATIVADO);
         carroRepository.save(carro);

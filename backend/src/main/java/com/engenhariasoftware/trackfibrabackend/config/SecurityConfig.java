@@ -2,6 +2,7 @@ package com.engenhariasoftware.trackfibrabackend.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
@@ -38,7 +39,12 @@ public class SecurityConfig {
                         .requestMatchers("/api/v1/funcionarios/**").hasRole("SUPERVISOR")
                         .requestMatchers("/api/v1/carros/**").hasRole("SUPERVISOR")
                         .requestMatchers("/api/v1/clientes/**").hasRole("SUPERVISOR")
-                        .requestMatchers("/api/v1/chamadas/**").hasRole("SUPERVISOR")
+                        .requestMatchers("/api/v1/tipos-servico/**").authenticated()
+
+                        .requestMatchers(HttpMethod.POST,  "/api/v1/chamadas").hasRole("SUPERVISOR")
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/chamadas/*/cancelar").hasRole("SUPERVISOR")
+                        .requestMatchers(HttpMethod.GET,   "/api/v1/chamadas/**").authenticated()
+                        .requestMatchers(HttpMethod.PATCH, "/api/v1/chamadas/**").authenticated()
 
                         // Qualquer outra rota do sistema exigirá que o usuário esteja logado
                         .anyRequest().authenticated()

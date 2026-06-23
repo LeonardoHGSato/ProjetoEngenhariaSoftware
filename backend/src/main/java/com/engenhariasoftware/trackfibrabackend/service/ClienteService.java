@@ -1,11 +1,13 @@
 package com.engenhariasoftware.trackfibrabackend.service;
 
 import com.engenhariasoftware.trackfibrabackend.dto.*;
+import com.engenhariasoftware.trackfibrabackend.enums.StatusChamada;
 import com.engenhariasoftware.trackfibrabackend.enums.StatusCliente;
 import com.engenhariasoftware.trackfibrabackend.exception.ConflitoException;
 import com.engenhariasoftware.trackfibrabackend.exception.RecursoNaoEncontradoException;
 import com.engenhariasoftware.trackfibrabackend.model.Cliente;
 import com.engenhariasoftware.trackfibrabackend.model.Endereco;
+import com.engenhariasoftware.trackfibrabackend.repository.ChamadaRepository;
 import com.engenhariasoftware.trackfibrabackend.repository.ClienteRepository;
 import com.engenhariasoftware.trackfibrabackend.repository.ClienteSpecification;
 import org.springframework.data.domain.Page;
@@ -19,10 +21,12 @@ public class ClienteService {
 
     private final ClienteRepository clienteRepository;
     private final ViaCepService viaCepService;
+    private final ChamadaRepository chamadaRepository;
 
-    public ClienteService(ClienteRepository clienteRepository, ViaCepService viaCepService){
+    public ClienteService(ClienteRepository clienteRepository, ViaCepService viaCepService, ChamadaRepository chamadaRepository){
         this.clienteRepository = clienteRepository;
         this.viaCepService = viaCepService;
+        this.chamadaRepository = chamadaRepository;
     }
 
     public ClienteResponseDTO cadastrarCliente(ClienteRequestDTO requestDTO){
@@ -59,7 +63,6 @@ public class ClienteService {
 
     @Transactional
     public ClienteResponseDTO editarCliente(Long id, ClienteEdicaoDTO edicaoDTO){
-// TODO: ao criar chamada, confirmar que ela usa uma cópia de Endereço e nao uma referencia ao Cliente/Endereço.
 
         Cliente clienteAlterado = clienteRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Não há nenhum cliente cadastrado com esse id."));
 
@@ -75,9 +78,11 @@ public class ClienteService {
 
     @Transactional
     public ClienteResponseDTO desativarCliente(Long id){
-//        TODO: quando criar os chamados, validar se o cliente possuí chamados em aberto para lançar o ConflitoException
-
         Cliente clienteDesativado = clienteRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Não há nenhum cliente cadastrado com esse id."));
+
+        if (chamadaRepository.existsByClienteIdAndStatus(id, StatusChamada.ABERTA)) {
+            throw new ConflitoException("Não é possível remover um cliente com chamada em aberto.");
+        }
 
         clienteDesativado.setStatus(StatusCliente.INATIVO);
         clienteRepository.save(clienteDesativado);

@@ -4,10 +4,12 @@ import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioEdicaoDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioListagemDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioRequestDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioResponseDTO;
+import com.engenhariasoftware.trackfibrabackend.enums.StatusChamada;
 import com.engenhariasoftware.trackfibrabackend.enums.StatusFuncionario;
 import com.engenhariasoftware.trackfibrabackend.exception.ConflitoException;
 import com.engenhariasoftware.trackfibrabackend.exception.RecursoNaoEncontradoException;
 import com.engenhariasoftware.trackfibrabackend.model.FuncionarioModel;
+import com.engenhariasoftware.trackfibrabackend.repository.ChamadaRepository;
 import com.engenhariasoftware.trackfibrabackend.repository.FuncionarioRepository;
 import com.engenhariasoftware.trackfibrabackend.repository.FuncionarioSpecification;
 import org.springframework.data.domain.Page;
@@ -23,11 +25,13 @@ public class FuncionarioService {
     // Declaracao do atributo
     private final FuncionarioRepository funcionarioRepository;
     private final PasswordEncoder passwordEncoder;
+    private final ChamadaRepository chamadaRepository;
 
     // O construtor aqui serve para fazer uma injecao de dependencias. Assim, o spring entrega um repository pronto ao invés de criar um com o new
-    public FuncionarioService(FuncionarioRepository funcionarioRepository, PasswordEncoder passwordEncoder) {
+    public FuncionarioService(FuncionarioRepository funcionarioRepository, PasswordEncoder passwordEncoder, ChamadaRepository chamadaRepository) {
         this.funcionarioRepository = funcionarioRepository;
         this.passwordEncoder = passwordEncoder;
+        this.chamadaRepository = chamadaRepository;
     }
 
     public FuncionarioResponseDTO cadastrarFuncionario(FuncionarioRequestDTO requestDTO){
@@ -111,6 +115,10 @@ public class FuncionarioService {
         // Pega os dados do do funcionario e altera o status dele para INATIVO
         FuncionarioModel funcionarioDesativado = funcionarioRepository.findById(id)
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Não há nenhum funcionário cadastrado com esse id"));
+
+        if (chamadaRepository.existsByFuncionarioIdAndStatus(id, StatusChamada.ABERTA)) {
+            throw new ConflitoException("Não é possível desativar um funcionário com chamada em aberto.");
+        }
 
         funcionarioDesativado.setStatusFuncionario(StatusFuncionario.INATIVO);
 
