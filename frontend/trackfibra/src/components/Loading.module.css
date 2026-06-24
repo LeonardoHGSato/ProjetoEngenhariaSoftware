@@ -10,7 +10,7 @@
 .spinner {
   display: inline-block;
   border: 3px solid rgba(136, 136, 136, 0.3);
-  border-top-color: #171717;
+  border-top-color: var(--primary);
   border-radius: 50%;
   animation: girar 0.7s linear infinite;
 }
@@ -34,7 +34,7 @@
 
 .mensagem {
   font-size: 0.875rem;
-  color: #555555;
+  color: var(--text-muted);
 }
 
 .oculto {
@@ -52,16 +52,5 @@
 @keyframes girar {
   to {
     transform: rotate(360deg);
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .spinner {
-    border-color: rgba(136, 136, 136, 0.3);
-    border-top-color: #ededed;
-  }
-
-  .mensagem {
-    color: #aaaaaa;
   }
 }

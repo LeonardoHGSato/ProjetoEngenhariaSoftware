@@ -1,5 +1,9 @@
 .tabelaWrapper {
   overflow-x: auto;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
 }
 
 .tabela {
@@ -11,35 +15,29 @@
 .tabela th,
 .tabela td {
   text-align: left;
-  padding: 0.75rem;
-  border-bottom: 1px solid #ececec;
+  padding: 0.85rem 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.tabela tbody tr:last-child td {
+  border-bottom: none;
 }
 
 .tabela th {
   font-size: 0.8125rem;
   text-transform: uppercase;
   letter-spacing: 0.03em;
-  color: #777777;
+  color: var(--text-muted);
+  background: var(--surface-2);
 }
 
 .linhaClicavel {
   cursor: pointer;
+  transition: background 0.15s ease;
 }
 
 .linhaClicavel:hover,
 .linhaClicavel:focus-visible {
-  background: #f5f5f5;
+  background: var(--surface-2);
   outline: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  .tabela th,
-  .tabela td {
-    border-bottom-color: #2a2a2a;
-  }
-
-  .linhaClicavel:hover,
-  .linhaClicavel:focus-visible {
-    background: #1f1f1f;
-  }
 }
