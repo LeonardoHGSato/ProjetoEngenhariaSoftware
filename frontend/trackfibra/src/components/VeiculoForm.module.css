@@ -20,15 +20,15 @@
   width: 100%;
   padding: 0.625rem 0.75rem;
   border-radius: 6px;
-  border: 1px solid #d4d4d4;
+  border: 1px solid var(--border);
   background: #ffffff;
-  color: #171717;
+  color: var(--text);
   font-size: 0.9375rem;
 }
 
 .input:focus {
   outline: none;
-  border-color: #171717;
+  border-color: var(--primary);
 }
 
 .input:disabled {
@@ -56,7 +56,7 @@
   padding: 0.625rem 1.5rem;
   border-radius: 6px;
   border: none;
-  background: #171717;
+  background: var(--primary);
   color: #ffffff;
   font-size: 0.9375rem;
   font-weight: 600;
@@ -70,25 +70,4 @@
 .botao:disabled {
   opacity: 0.6;
   cursor: not-allowed;
-}
-
-@media (prefers-color-scheme: dark) {
-  .input {
-    background: #1a1a1a;
-    color: #ededed;
-    border-color: #3a3a3a;
-  }
-
-  .input:focus {
-    border-color: #ededed;
-  }
-
-  .ajuda {
-    color: #9ca3af;
-  }
-
-  .botao {
-    background: #ededed;
-    color: #171717;
-  }
 }

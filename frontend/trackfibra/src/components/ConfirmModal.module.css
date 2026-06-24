@@ -14,7 +14,7 @@
   width: 100%;
   max-width: 420px;
   background: #ffffff;
-  color: #171717;
+  color: var(--text);
   border-radius: 8px;
   padding: 1.5rem;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
@@ -30,7 +30,7 @@
 .mensagem {
   font-size: 0.9375rem;
   line-height: 1.4;
-  color: #444444;
+  color: var(--text-muted);
   margin-bottom: 1.5rem;
 }
 
@@ -52,16 +52,16 @@
 
 .botaoCancelar {
   background: transparent;
-  border-color: #d4d4d4;
-  color: #171717;
+  border-color: var(--border);
+  color: var(--text);
 }
 
 .botaoCancelar:hover:not(:disabled) {
-  background: #f5f5f5;
+  background: var(--surface-2);
 }
 
 .botaoConfirmar {
-  background: #171717;
+  background: var(--primary);
   color: #ffffff;
 }
 
@@ -96,25 +96,5 @@
   to {
     opacity: 1;
     transform: translateY(0);
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .modal {
-    background: #1a1a1a;
-    color: #ededed;
-  }
-
-  .mensagem {
-    color: #b5b5b5;
-  }
-
-  .botaoCancelar {
-    border-color: #3a3a3a;
-    color: #ededed;
-  }
-
-  .botaoCancelar:hover:not(:disabled) {
-    background: #2a2a2a;
   }
 }

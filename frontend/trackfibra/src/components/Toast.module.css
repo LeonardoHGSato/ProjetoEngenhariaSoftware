@@ -17,9 +17,9 @@
   padding: 0.875rem 1rem;
   border-radius: 8px;
   background: #ffffff;
-  color: #171717;
+  color: var(--text);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.15);
-  border-left: 4px solid #888888;
+  border-left: 4px solid var(--text-muted);
   animation: entrada 0.2s ease-out;
 }
 
@@ -47,14 +47,14 @@
   background: none;
   border: none;
   cursor: pointer;
-  color: #888888;
+  color: var(--text-muted);
   font-size: 0.875rem;
   line-height: 1;
   padding: 0.25rem;
 }
 
 .fechar:hover {
-  color: #171717;
+  color: var(--text);
 }
 
 .success {
@@ -89,16 +89,5 @@
   to {
     opacity: 1;
     transform: translateX(0);
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  .toast {
-    background: #1a1a1a;
-    color: #ededed;
-  }
-
-  .fechar:hover {
-    color: #ededed;
   }
 }
