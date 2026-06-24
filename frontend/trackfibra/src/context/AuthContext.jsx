@@ -55,6 +55,19 @@ export function AuthProvider({ children }) {
     });
   }
 
+  // Atualiza o nome exibido (ex: sidebar) após o usuário editar o próprio
+  // perfil, persistindo no storage que guarda a sessão atual.
+  function atualizarNome(nome) {
+    const storage = localStorage.getItem(STORAGE_KEYS.token)
+      ? localStorage
+      : sessionStorage;
+    storage.setItem(STORAGE_KEYS.nome, nome);
+    setSession((anterior) => ({
+      ...anterior,
+      user: anterior.user ? { ...anterior.user, nome } : anterior.user,
+    }));
+  }
+
   function logout() {
     limparStorages();
     setSession({ token: null, user: null, carregando: false });
@@ -69,6 +82,7 @@ export function AuthProvider({ children }) {
         isAuthenticated: Boolean(session.token),
         login,
         logout,
+        atualizarNome,
       }}
     >
       {children}
