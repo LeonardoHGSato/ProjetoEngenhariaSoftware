@@ -1,7 +1,7 @@
 .badge {
   display: inline-block;
   padding: 0.125rem 0.5rem;
-  border-radius: 999px;
+  border-radius: var(--radius-pill);
   font-size: 0.75rem;
   font-weight: 600;
   white-space: nowrap;
@@ -28,33 +28,6 @@
 }
 
 .neutro {
-  background: #f3f4f6;
-  color: #6b7280;
-}
-
-@media (prefers-color-scheme: dark) {
-  .disponivel {
-    background: #14331f;
-    color: #4ade80;
-  }
-
-  .emUso {
-    background: #15294d;
-    color: #60a5fa;
-  }
-
-  .manutencao {
-    background: #3a2e0a;
-    color: #fbbf24;
-  }
-
-  .desativado {
-    background: #3a1414;
-    color: #f87171;
-  }
-
-  .neutro {
-    background: #2a2a2a;
-    color: #9ca3af;
-  }
+  background: #f1f5f9;
+  color: #64748b;
 }
