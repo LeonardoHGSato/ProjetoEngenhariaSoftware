@@ -39,3 +39,13 @@ export async function desativarFuncionario(id) {
   const { data } = await api.delete(`${BASE}/${id}`);
   return data;
 }
+
+// Histórico de chamadas atendidas pelo funcionário. inicio e fim são
+// obrigatórios no backend (ISO LocalDateTime). Retorna o Page do Spring de
+// ChamadaHistoricoDTO: { content, totalPages, number, first, last, ... }.
+export async function historicoFuncionario(id, { inicio, fim, page = 0, size = 10 }) {
+  const { data } = await api.get(`${BASE}/${id}/historico`, {
+    params: { inicio, fim, page, size },
+  });
+  return data;
+}
