@@ -1,9 +1,6 @@
 package com.engenhariasoftware.trackfibrabackend.service;
 
-import com.engenhariasoftware.trackfibrabackend.dto.ChamadaFinalizarDTO;
-import com.engenhariasoftware.trackfibrabackend.dto.ChamadaListagemDTO;
-import com.engenhariasoftware.trackfibrabackend.dto.ChamadaRequestDTO;
-import com.engenhariasoftware.trackfibrabackend.dto.ChamadaResponseDTO;
+import com.engenhariasoftware.trackfibrabackend.dto.*;
 import com.engenhariasoftware.trackfibrabackend.enums.PerfilFuncionario;
 import com.engenhariasoftware.trackfibrabackend.enums.StatusCarro;
 import com.engenhariasoftware.trackfibrabackend.enums.StatusChamada;
@@ -154,6 +151,29 @@ public class ChamadaService {
 
         chamada.setRelato(dto.relato());
         chamada.setStatus(StatusChamada.CONCLUIDA);
+
+        Carro carro = chamada.getCarro();
+        carro.setStatus(StatusCarro.DISPONIVEL);
+        carroRepository.save(carro);
+
+        return new ChamadaResponseDTO(chamadaRepository.save(chamada));
+    }
+
+    @Transactional
+    public ChamadaResponseDTO cancelarChamada(Long id, ChamadaCancelarDTO dto) {
+        Chamada chamada = chamadaRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Chamada não encontrada."));
+
+        if (chamada.getStatus() == StatusChamada.CONCLUIDA) {
+            throw new ConflitoException("Chamadas já concluídas não podem ser canceladas.");
+        }
+
+        if (chamada.getStatus() == StatusChamada.CANCELADA) {
+            throw new ConflitoException("Esta chamada já foi cancelada.");
+        }
+
+        chamada.setStatus(StatusChamada.CANCELADA);
+        chamada.setMotivoCancelamento(dto.motivo());
 
         Carro carro = chamada.getCarro();
         carro.setStatus(StatusCarro.DISPONIVEL);
