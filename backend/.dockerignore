@@ -1,0 +1,7 @@
+target/
+HELP.md
+.git
+.gitignore
+*.md
+# Configuracao local — a imagem usa o perfil "docker" (application-docker.properties).
+src/main/resources/application.properties
