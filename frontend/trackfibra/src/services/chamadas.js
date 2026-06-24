@@ -37,3 +37,26 @@ export async function listarChamadas({
   const { data } = await api.get(BASE, { params });
   return data;
 }
+
+// Busca uma chamada pelo id. Retorna o ChamadaResponseDTO completo
+// (cliente, funcionário, carro, endereço, relato e motivo de cancelamento),
+// usado na tela de detalhes. O backend valida o escopo por perfil.
+export async function buscarChamada(id) {
+  const { data } = await api.get(`${BASE}/${id}`);
+  return data;
+}
+
+// Finaliza uma chamada aberta. Payload: { relato, dataHoraConclusao }.
+// relato tem no mínimo 10 caracteres; dataHoraConclusao no formato ISO
+// LocalDateTime. Pode retornar 409 quando a chamada não está aberta.
+export async function finalizarChamada(id, payload) {
+  const { data } = await api.patch(`${BASE}/${id}/finalizar`, payload);
+  return data;
+}
+
+// Cancela uma chamada aberta. Payload: { motivoCancelamento }.
+// Pode retornar 409 quando a chamada não está aberta.
+export async function cancelarChamada(id, payload) {
+  const { data } = await api.patch(`${BASE}/${id}/cancelar`, payload);
+  return data;
+}
