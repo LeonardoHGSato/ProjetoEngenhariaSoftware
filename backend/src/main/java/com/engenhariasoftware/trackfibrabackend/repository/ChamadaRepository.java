@@ -27,4 +27,6 @@ public interface ChamadaRepository extends JpaRepository<Chamada, Long>, JpaSpec
 
     long countByStatus(StatusChamada status);
     long countByFuncionarioIdAndStatus(Long funcionarioId, StatusChamada status);
+
+    List<Chamada> findByFuncionarioIdAndStatusOrderByDataHoraDesc(Long funcionarioId, StatusChamada status);
 }
