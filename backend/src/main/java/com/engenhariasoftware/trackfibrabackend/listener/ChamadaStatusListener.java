@@ -18,7 +18,7 @@ public class ChamadaStatusListener {
         repository.save(new ChamadaStatusLog(chamada));
     }
 
-    @PostPersist
+    @PostUpdate
     public void logAtualizacao(Chamada chamada){
         repository.save(new ChamadaStatusLog(chamada));
     }
