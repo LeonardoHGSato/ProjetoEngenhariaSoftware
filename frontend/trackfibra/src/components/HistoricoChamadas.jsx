@@ -54,10 +54,14 @@ export default function HistoricoChamadas({ carregar }) {
   const [fim, setFim] = useState(periodo.fim);
   const [pagina, setPagina] = useState(0);
 
-  const buscar = useCallback(
-    () => carregar({ inicio, fim, page: pagina, size: TAMANHO_PAGINA }),
-    [carregar, inicio, fim, pagina],
-  );
+  // O backend exige inicio e fim; se algum estiver vazio (input limpo pelo
+  // usuário), não disparamos a busca para evitar um 400.
+  const buscar = useCallback(() => {
+    if (!inicio || !fim) {
+      return Promise.resolve({ content: [], totalPages: 0, first: true, last: true });
+    }
+    return carregar({ inicio, fim, page: pagina, size: TAMANHO_PAGINA });
+  }, [carregar, inicio, fim, pagina]);
 
   const { dados, erro, carregando, executar: recarregar } = useAsync(buscar);
 
