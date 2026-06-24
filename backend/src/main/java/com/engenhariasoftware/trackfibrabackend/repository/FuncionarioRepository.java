@@ -1,5 +1,7 @@
 package com.engenhariasoftware.trackfibrabackend.repository;
 
+import com.engenhariasoftware.trackfibrabackend.enums.PerfilFuncionario;
+import com.engenhariasoftware.trackfibrabackend.enums.StatusFuncionario;
 import com.engenhariasoftware.trackfibrabackend.model.FuncionarioModel;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
@@ -17,4 +19,6 @@ public interface FuncionarioRepository extends JpaRepository<FuncionarioModel, L
     boolean existsByEmailAndIdNot(String email, Long id);
 
     Optional<FuncionarioModel> findByEmail(String email);
+
+    long countByStatusFuncionarioAndPerfilFuncionario(StatusFuncionario status, PerfilFuncionario perfil);
 }

@@ -24,4 +24,7 @@ public interface ChamadaRepository extends JpaRepository<Chamada, Long>, JpaSpec
     Page<Chamada> findByClienteIdAndDataHoraBetween(Long clienteId, LocalDateTime inicio, LocalDateTime fim, Pageable pageable);
 
     Page<Chamada> findByFuncionarioIdAndDataHoraBetween(Long funcionarioId, LocalDateTime inicio, LocalDateTime fim, Pageable pageable);
+
+    long countByStatus(StatusChamada status);
+    long countByFuncionarioIdAndStatus(Long funcionarioId, StatusChamada status);
 }

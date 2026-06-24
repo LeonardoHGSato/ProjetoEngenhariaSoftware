@@ -12,4 +12,6 @@ public interface CarroRepository extends JpaRepository<Carro, Long> {
 
     Page<Carro> findByStatus(StatusCarro status, Pageable pageable);
     Page<Carro> findByStatusNot(StatusCarro status, Pageable pageable);
+
+    long countByStatus(StatusCarro status);
 }
