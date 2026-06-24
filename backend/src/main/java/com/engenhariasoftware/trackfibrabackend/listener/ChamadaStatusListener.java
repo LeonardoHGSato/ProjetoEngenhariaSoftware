@@ -4,6 +4,7 @@ import com.engenhariasoftware.trackfibrabackend.model.Chamada;
 import com.engenhariasoftware.trackfibrabackend.model.ChamadaStatusLog;
 import com.engenhariasoftware.trackfibrabackend.repository.ChamadaStatusLogRepository;
 import jakarta.persistence.PostPersist;
+import jakarta.persistence.PostUpdate;
 import org.springframework.stereotype.Component;
 
 @Component
