@@ -8,7 +8,9 @@ import PrivateRoute from "@/components/PrivateRoute";
 import Loading from "@/components/Loading";
 import ErroEstado from "@/components/ErroEstado";
 import StatusBadge from "@/components/StatusBadge";
+import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
+import { ROLES } from "@/config/menu";
 import { useAsync } from "@/hooks/useAsync";
 import {
   buscarChamada,
@@ -65,7 +67,13 @@ function agoraLocal() {
 export default function DetalheChamadaPage() {
   const router = useRouter();
   const { toast } = useToast();
+  const { user } = useAuth();
   const { id } = useParams();
+
+  // O técnico acessa esta página via "Minhas Chamadas" e não tem permissão
+  // para a listagem de supervisor (/chamadas), que redireciona ao /403.
+  const rotaVoltar =
+    user?.role === ROLES.tecnico ? "/minhas-chamadas" : "/chamadas";
 
   const carregarChamada = useCallback(() => buscarChamada(id), [id]);
   const {
@@ -140,7 +148,7 @@ export default function DetalheChamadaPage() {
             </h1>
             {chamada && <StatusBadge status={chamada.status} />}
           </div>
-          <Link href="/chamadas" className={styles.acaoVoltar}>
+          <Link href={rotaVoltar} className={styles.acaoVoltar}>
             Voltar
           </Link>
         </div>
