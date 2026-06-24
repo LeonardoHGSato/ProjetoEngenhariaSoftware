@@ -7,5 +7,5 @@ import java.util.List;
 
 public interface ChamadaStatusLogRepository extends JpaRepository<ChamadaStatusLog, Long> {
 
-    List<ChamadaStatusLog> findTop10ByOrderByDataHoraDesc();
+    List<ChamadaStatusLog> findTop10ByOrderByAlteradoEmDesc();
 }

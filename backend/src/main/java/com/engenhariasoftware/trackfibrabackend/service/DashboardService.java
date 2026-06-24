@@ -58,7 +58,7 @@ public class DashboardService {
                 carroRepository.countByStatus(StatusCarro.MANUTENCAO)
         );
 
-        List<UltimaChamadaDTO> ultimasChamadas = logRepository.findTop10ByOrderByDataHoraDesc()
+        List<UltimaChamadaDTO> ultimasChamadas = logRepository.findTop10ByOrderByAlteradoEmDesc()
                 .stream()
                 .map(UltimaChamadaDTO::new)
                 .toList();
