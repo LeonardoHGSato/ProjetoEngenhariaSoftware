@@ -36,7 +36,8 @@
   display: flex;
   align-items: center;
   gap: 1rem;
-  padding: 0.875rem 1.5rem;
+  height: 57px;
+  padding: 0 1.5rem;
   background: var(--surface);
   border-bottom: 1px solid var(--border);
 }

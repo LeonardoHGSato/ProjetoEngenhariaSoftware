@@ -21,8 +21,8 @@
   --danger-soft: #fef2f2;
 
   /* Raios e sombras */
-  --radius: 12px;
-  --radius-sm: 8px;
+  --radius: 14px;
+  --radius-sm: 10px;
   --radius-pill: 999px;
   --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.04);
   --shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
