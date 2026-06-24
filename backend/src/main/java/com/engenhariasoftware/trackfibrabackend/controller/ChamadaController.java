@@ -54,7 +54,7 @@ public class ChamadaController {
     }
 
     @PatchMapping("/{id}/finalizar")
-    public ResponseEntity<ChamadaResponseDTO> finalzarChamada(@PathVariable Long id, @RequestParam @Valid ChamadaFinalizarDTO dto, @AuthenticationPrincipal FuncionarioModel usuarioLogado){
+    public ResponseEntity<ChamadaResponseDTO> finalizarChamada(@PathVariable Long id, @RequestBody @Valid ChamadaFinalizarDTO dto, @AuthenticationPrincipal FuncionarioModel usuarioLogado){
         return ResponseEntity.ok(chamadaService.finalizarChamada(id, dto, usuarioLogado));
     }
 

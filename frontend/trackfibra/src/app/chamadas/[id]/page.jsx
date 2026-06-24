@@ -2,7 +2,7 @@
 
 import { useCallback, useState } from "react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import PrivateRoute from "@/components/PrivateRoute";
 import Loading from "@/components/Loading";
@@ -57,6 +57,9 @@ function formatarEndereco(endereco) {
 // Mínimo de caracteres exigido no relato ao finalizar (alinhado ao backend).
 const RELATO_MIN = 10;
 
+// Mínimo de caracteres exigido no motivo ao cancelar (alinhado ao backend).
+const MOTIVO_MIN = 10;
+
 // "YYYY-MM-DDTHH:mm" no fuso local, para pré-preencher o input datetime-local.
 function agoraLocal() {
   const agora = new Date();
@@ -65,7 +68,6 @@ function agoraLocal() {
 }
 
 export default function DetalheChamadaPage() {
-  const router = useRouter();
   const { toast } = useToast();
   const { user } = useAuth();
   const { id } = useParams();
@@ -139,6 +141,7 @@ export default function DetalheChamadaPage() {
   // Apenas o supervisor pode cancelar (o backend restringe o endpoint a SUPERVISOR).
   const podeCancelar = user?.role === ROLES.supervisor;
   const relatoValido = relato.trim().length >= RELATO_MIN;
+  const motivoValido = motivo.trim().length >= MOTIVO_MIN;
 
   return (
     <PrivateRoute>
@@ -355,10 +358,18 @@ export default function DetalheChamadaPage() {
                   className={styles.textarea}
                   value={motivo}
                   onChange={(e) => setMotivo(e.target.value)}
+                  minLength={MOTIVO_MIN}
                   rows={4}
-                  placeholder="Informe o motivo do cancelamento."
+                  placeholder="Informe o motivo do cancelamento (mínimo 10 caracteres)."
                   required
                 />
+                <span
+                  className={`${styles.contador} ${
+                    motivoValido ? "" : styles.contadorInvalido
+                  }`}
+                >
+                  {motivo.trim().length}/{MOTIVO_MIN} caracteres
+                </span>
               </label>
               <div className={styles.modalAcoes}>
                 <button
@@ -372,7 +383,7 @@ export default function DetalheChamadaPage() {
                 <button
                   type="submit"
                   className={styles.botaoCancelarConfirmar}
-                  disabled={enviando}
+                  disabled={enviando || !motivoValido}
                 >
                   {enviando ? "Aguarde..." : "Cancelar chamada"}
                 </button>
