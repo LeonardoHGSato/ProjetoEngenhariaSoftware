@@ -1,0 +1,23 @@
+# Conexão com o banco (Neon - ambiente de apresentação)
+# Substitua HOST, USUARIO e SENHA com os dados do seu projeto no console.neon.tech
+spring.datasource.url=jdbc:postgresql://HOST/neondb?sslmode=require&channelBinding=require
+spring.datasource.username=USUARIO
+spring.datasource.password=SENHA
+spring.datasource.driver-class-name=org.postgresql.Driver
+
+# JPA
+spring.jpa.hibernate.ddl-auto=none
+spring.jpa.show-sql=true
+spring.jpa.properties.hibernate.format_sql=true
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+
+# Flyway
+spring.flyway.enabled=true
+spring.flyway.locations=classpath:db/migration
+
+# JWT
+app.jwt.secret-key=troque_por_uma_chave_secreta_com_pelo_menos_256_bits
+app.jwt.expiration-time=86400000
+
+# CORS
+app.cors.allowed-origins=http://localhost:3000
