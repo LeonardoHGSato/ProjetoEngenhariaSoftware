@@ -1,7 +1,7 @@
 package com.engenhariasoftware.trackfibrabackend.dto;
 
 import com.engenhariasoftware.trackfibrabackend.enums.StatusCliente;
-import com.engenhariasoftware.trackfibrabackend.model.Cliente;
+import com.engenhariasoftware.trackfibrabackend.model.ClienteModel;
 
 public record ClienteResponseDTO(
         Long id,
@@ -12,7 +12,7 @@ public record ClienteResponseDTO(
         EnderecoDTO endereco,
         StatusCliente status
 ){
-    public ClienteResponseDTO(Cliente cliente) {
+    public ClienteResponseDTO(ClienteModel cliente) {
         this(
                 cliente.getId(),
                 cliente.getNome(),

@@ -5,7 +5,6 @@ import com.engenhariasoftware.trackfibrabackend.dto.ClienteEdicaoDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.ClienteListagemDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.ClienteRequestDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.ClienteResponseDTO;
-import com.engenhariasoftware.trackfibrabackend.model.Cliente;
 import com.engenhariasoftware.trackfibrabackend.service.ClienteService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;

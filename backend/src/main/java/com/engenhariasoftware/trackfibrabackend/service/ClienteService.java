@@ -5,7 +5,7 @@ import com.engenhariasoftware.trackfibrabackend.enums.StatusChamada;
 import com.engenhariasoftware.trackfibrabackend.enums.StatusCliente;
 import com.engenhariasoftware.trackfibrabackend.exception.ConflitoException;
 import com.engenhariasoftware.trackfibrabackend.exception.RecursoNaoEncontradoException;
-import com.engenhariasoftware.trackfibrabackend.model.Cliente;
+import com.engenhariasoftware.trackfibrabackend.model.ClienteModel;
 import com.engenhariasoftware.trackfibrabackend.model.Endereco;
 import com.engenhariasoftware.trackfibrabackend.repository.ChamadaRepository;
 import com.engenhariasoftware.trackfibrabackend.repository.ClienteRepository;
@@ -38,7 +38,7 @@ public class ClienteService {
 
         Endereco endereco = montarEnderecoValido(requestDTO.endereco());
 
-        Cliente clienteNovo = new Cliente();
+        ClienteModel clienteNovo = new ClienteModel();
         clienteNovo.setNome(requestDTO.nome());
         clienteNovo.setCpfCnpj(cpfCnpjLimpo);
         clienteNovo.setTelefone(requestDTO.telefone());
@@ -50,21 +50,21 @@ public class ClienteService {
     }
 
     public Page<ClienteListagemDTO> listarClientes(String busca, Pageable pageable){
-        Specification<Cliente> filtro = Specification.allOf(ClienteSpecification.comBusca(busca),
+        Specification<ClienteModel> filtro = Specification.allOf(ClienteSpecification.comBusca(busca),
                 (root, query, cb) -> cb.equal(root.get("status"), StatusCliente.ATIVO));
-        Page<Cliente> clientes = clienteRepository.findAll(filtro, pageable);
+        Page<ClienteModel> clientes = clienteRepository.findAll(filtro, pageable);
         return clientes.map(ClienteListagemDTO::new);
     }
 
     public ClienteResponseDTO buscarPorId(Long id){
-        Cliente cliente = clienteRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Não há nenhum cliente cadastrado com esse id"));
+        ClienteModel cliente = clienteRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Não há nenhum cliente cadastrado com esse id"));
         return new ClienteResponseDTO(cliente);
     }
 
     @Transactional
     public ClienteResponseDTO editarCliente(Long id, ClienteEdicaoDTO edicaoDTO){
 
-        Cliente clienteAlterado = clienteRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Não há nenhum cliente cadastrado com esse id."));
+        ClienteModel clienteAlterado = clienteRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Não há nenhum cliente cadastrado com esse id."));
 
         Endereco endereco = montarEnderecoValido(edicaoDTO.endereco());
         clienteAlterado.setNome(edicaoDTO.nome());
@@ -78,7 +78,7 @@ public class ClienteService {
 
     @Transactional
     public ClienteResponseDTO desativarCliente(Long id){
-        Cliente clienteDesativado = clienteRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Não há nenhum cliente cadastrado com esse id."));
+        ClienteModel clienteDesativado = clienteRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Não há nenhum cliente cadastrado com esse id."));
 
         if (chamadaRepository.existsByClienteIdAndStatus(id, StatusChamada.ABERTA)) {
             throw new ConflitoException("Não é possível remover um cliente com chamada em aberto.");
