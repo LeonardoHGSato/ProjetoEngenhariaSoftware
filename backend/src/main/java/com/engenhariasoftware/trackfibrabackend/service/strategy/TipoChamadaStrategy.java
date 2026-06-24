@@ -8,4 +8,5 @@ public interface TipoChamadaStrategy {
     TipoServico getTipoSuportado();
     // A regra de negócio que será executada
     void executar(Chamada chamada);
+    void executarFinalizacao(Chamada chamada);
 }

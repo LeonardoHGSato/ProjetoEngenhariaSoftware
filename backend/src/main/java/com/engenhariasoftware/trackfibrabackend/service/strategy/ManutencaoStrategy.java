@@ -15,4 +15,8 @@ public class ManutencaoStrategy implements TipoChamadaStrategy {
     @Override
     public void executar(Chamada chamada) {
         chamada.setRelato(getTipoSuportado().getDescricao());    }
+
+    @Override
+    public void executarFinalizacao(Chamada chamada) {
+    }
 }

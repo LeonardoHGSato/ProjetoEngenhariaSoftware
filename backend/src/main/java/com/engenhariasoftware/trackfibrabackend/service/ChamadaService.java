@@ -1,5 +1,6 @@
 package com.engenhariasoftware.trackfibrabackend.service;
 
+import com.engenhariasoftware.trackfibrabackend.dto.ChamadaFinalizarDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.ChamadaListagemDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.ChamadaRequestDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.ChamadaResponseDTO;
@@ -124,5 +125,29 @@ public class ChamadaService {
         );
 
         return chamadaRepository.findAll(filtros, paginacaoComRegra).map(ChamadaListagemDTO::new);
+    }
+
+    @Transactional
+    public ChamadaResponseDTO finalizarChamada(Long id, ChamadaFinalizarDTO dto, FuncionarioModel usuarioLogado){
+        Chamada chamada = chamadaRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Chamada não encontrada"));
+
+        if(!chamada.getFuncionario().getId().equals(usuarioLogado.getId())){
+            throw new AccessDeniedException("Acesso negado.");
+        }
+
+        if (chamada.getStatus() != StatusChamada.ABERTA){
+            throw new ConflitoException("Apenas chamadas abertas podem ser finalizadas.");
+        }
+        strategies.stream().filter(strategy -> strategy.getTipoSuportado() == chamada.getTipoServico())
+                .findFirst().ifPresent(strategy -> strategy.executarFinalizacao(chamada));
+
+        chamada.setRelato(dto.relato());
+        chamada.setStatus(StatusChamada.CONCLUIDA);
+
+        Carro carro = chamada.getCarro();
+        carro.setStatus(StatusCarro.DISPONIVEL);
+        carroRepository.save(carro);
+
+        return new ChamadaResponseDTO(chamadaRepository.save(chamada));
     }
 }
