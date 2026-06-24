@@ -1,5 +1,6 @@
 package com.engenhariasoftware.trackfibrabackend.controller;
 
+import com.engenhariasoftware.trackfibrabackend.dto.ChamadaFinalizarDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.ChamadaListagemDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.ChamadaRequestDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.ChamadaResponseDTO;
@@ -53,5 +54,10 @@ public class ChamadaController {
                 status, tipoServico, funcionarioId, inicio, fim, usuarioLogado, pageable);
 
         return ResponseEntity.ok(chamadas);
+    }
+
+    @PatchMapping("/{id}/finalizar")
+    public ResponseEntity<ChamadaResponseDTO> finalzarChamada(@PathVariable Long id, @RequestParam @Valid ChamadaFinalizarDTO dto, @AuthenticationPrincipal FuncionarioModel usuarioLogado){
+        return ResponseEntity.ok(chamadaService.finalizarChamada(id, dto, usuarioLogado));
     }
 }

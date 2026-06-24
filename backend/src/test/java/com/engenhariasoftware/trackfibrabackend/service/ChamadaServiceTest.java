@@ -1,5 +1,6 @@
 package com.engenhariasoftware.trackfibrabackend.service;
 
+import com.engenhariasoftware.trackfibrabackend.dto.ChamadaFinalizarDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.ChamadaRequestDTO;
 import com.engenhariasoftware.trackfibrabackend.dto.ChamadaResponseDTO;
 import com.engenhariasoftware.trackfibrabackend.enums.StatusCarro;
@@ -12,6 +13,7 @@ import com.engenhariasoftware.trackfibrabackend.repository.ChamadaRepository;
 import com.engenhariasoftware.trackfibrabackend.repository.ClienteRepository;
 import com.engenhariasoftware.trackfibrabackend.repository.FuncionarioRepository;
 import com.engenhariasoftware.trackfibrabackend.service.strategy.TipoChamadaStrategy;
+import org.springframework.security.access.AccessDeniedException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -53,6 +55,7 @@ class ChamadaServiceTest {
     private FuncionarioModel funcionario;
     private Carro carro;
     private ChamadaRequestDTO requestDTO;
+    private Chamada chamada;
 
     @BeforeEach
     void setup() {
@@ -79,6 +82,14 @@ class ChamadaServiceTest {
         chamadaService = new ChamadaService(
                 chamadaRepository, clienteRepository, funcionarioRepository, carroRepository, List.of(strategyMock)
         );
+
+        chamada = new Chamada();
+        chamada.setId(10L);
+        chamada.setCliente(cliente);
+        chamada.setFuncionario(funcionario);
+        chamada.setCarro(carro);
+        chamada.setTipoServico(TipoServico.INSTALACAO);
+        chamada.setStatus(StatusChamada.ABERTA);
     }
 
     @Test
@@ -164,6 +175,84 @@ class ChamadaServiceTest {
         chamadaService.abrirChamada(requestDTO);
 
         verify(strategyMock, times(1)).executar(any(Chamada.class));
+    }
+
+    @Test
+    @DisplayName("Deve finalizar chamada com sucesso")
+    void deveFinalizarComSucesso() {
+        ChamadaFinalizarDTO dto = new ChamadaFinalizarDTO("Serviço realizado com sucesso.", LocalDateTime.now());
+
+        when(chamadaRepository.findById(10L)).thenReturn(Optional.of(chamada));
+        when(strategyMock.getTipoSuportado()).thenReturn(TipoServico.INSTALACAO);
+        when(chamadaRepository.save(any(Chamada.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        ChamadaResponseDTO response = chamadaService.finalizarChamada(10L, dto, funcionario);
+
+        assertEquals(StatusChamada.CONCLUIDA, chamada.getStatus());
+        assertEquals("Serviço realizado com sucesso.", chamada.getRelato());
+        assertNotNull(response);
+    }
+
+    @Test
+    @DisplayName("Deve lançar 403 quando funcionário não é o atribuído à chamada")
+    void deveLancar403OutroFuncionario() {
+        FuncionarioModel outroFuncionario = new FuncionarioModel();
+        outroFuncionario.setId(99L);
+
+        ChamadaFinalizarDTO dto = new ChamadaFinalizarDTO("Relato qualquer aqui.", LocalDateTime.now());
+
+        when(chamadaRepository.findById(10L)).thenReturn(Optional.of(chamada));
+
+        assertThrows(AccessDeniedException.class, () -> {
+            chamadaService.finalizarChamada(10L, dto, outroFuncionario);
+        });
+
+        verify(chamadaRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Deve lançar 409 quando chamada já está concluída")
+    void deveLancar409JaConcluida() {
+        chamada.setStatus(StatusChamada.CONCLUIDA);
+        ChamadaFinalizarDTO dto = new ChamadaFinalizarDTO("Relato qualquer aqui.", LocalDateTime.now());
+
+        when(chamadaRepository.findById(10L)).thenReturn(Optional.of(chamada));
+
+        assertThrows(ConflitoException.class, () -> {
+            chamadaService.finalizarChamada(10L, dto, funcionario);
+        });
+
+        verify(chamadaRepository, never()).save(any());
+    }
+
+    @Test
+    @DisplayName("Deve liberar o carro após finalizar a chamada")
+    void deveLiberarCarroAposFinalizar() {
+        carro.setStatus(StatusCarro.EM_USO);
+        ChamadaFinalizarDTO dto = new ChamadaFinalizarDTO("Serviço realizado com sucesso.", LocalDateTime.now());
+
+        when(chamadaRepository.findById(10L)).thenReturn(Optional.of(chamada));
+        when(strategyMock.getTipoSuportado()).thenReturn(TipoServico.INSTALACAO);
+        when(chamadaRepository.save(any(Chamada.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        chamadaService.finalizarChamada(10L, dto, funcionario);
+
+        assertEquals(StatusCarro.DISPONIVEL, carro.getStatus());
+        verify(carroRepository, times(1)).save(carro);
+    }
+
+    @Test
+    @DisplayName("Deve delegar finalização à strategy correspondente ao tipo de serviço")
+    void deveDelegarFinalizacaoAStrategy() {
+        ChamadaFinalizarDTO dto = new ChamadaFinalizarDTO("Serviço realizado com sucesso.", LocalDateTime.now());
+
+        when(chamadaRepository.findById(10L)).thenReturn(Optional.of(chamada));
+        when(strategyMock.getTipoSuportado()).thenReturn(TipoServico.INSTALACAO);
+        when(chamadaRepository.save(any(Chamada.class))).thenAnswer(invocation -> invocation.getArgument(0));
+
+        chamadaService.finalizarChamada(10L, dto, funcionario);
+
+        verify(strategyMock, times(1)).executarFinalizacao(chamada);
     }
 }
 

@@ -16,4 +16,8 @@ public class RecolherEquipamentoStrategy implements TipoChamadaStrategy {
     public void executar(Chamada chamada) {
         chamada.setRelato(getTipoSuportado().getDescricao());
     }
+
+    @Override
+    public void executarFinalizacao(Chamada chamada) {
+    }
 }
