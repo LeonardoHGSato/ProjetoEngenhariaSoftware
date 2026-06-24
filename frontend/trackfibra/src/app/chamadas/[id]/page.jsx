@@ -124,7 +124,7 @@ export default function DetalheChamadaPage() {
     evento.preventDefault();
     setEnviando(true);
     try {
-      await cancelarChamada(id, { motivoCancelamento: motivo });
+      await cancelarChamada(id, { motivo });
       toast.success("Chamada cancelada.");
       setAcao(null);
       await recarregar();

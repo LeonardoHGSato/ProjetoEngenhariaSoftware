@@ -54,7 +54,7 @@ export async function finalizarChamada(id, payload) {
   return data;
 }
 
-// Cancela uma chamada aberta. Payload: { motivoCancelamento }.
+// Cancela uma chamada aberta. Payload: { motivo } (mínimo 10 caracteres).
 // Pode retornar 409 quando a chamada não está aberta.
 export async function cancelarChamada(id, payload) {
   const { data } = await api.patch(`${BASE}/${id}/cancelar`, payload);
