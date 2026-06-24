@@ -3,6 +3,7 @@ package com.engenhariasoftware.trackfibrabackend.config;
 import com.engenhariasoftware.trackfibrabackend.exception.ConflitoException;
 import com.engenhariasoftware.trackfibrabackend.exception.RecursoNaoEncontradoException;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.DisabledException;
@@ -53,6 +54,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleDisabledUsers(DisabledException ex){
         return ResponseEntity.status(HttpStatus.FORBIDDEN)
                 .body("Usuário inativo. Acesso negado.");
+    }
+
+//    403 para técnico tentando acessar chamada de outro funcionário
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<String> handleAccessDenied(AccessDeniedException ex){
+        return ResponseEntity.status(HttpStatus.FORBIDDEN).body("Acesso Negado.");
     }
 
     // 500 para erros internos inesperados

@@ -34,6 +34,11 @@ public class ChamadaController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @GetMapping("/{id}")
+    public ResponseEntity<ChamadaResponseDTO> buscarPorId(@PathVariable Long id, @AuthenticationPrincipal FuncionarioModel usuarioLogado){
+        return ResponseEntity.ok(chamadaService.buscarPorId(id, usuarioLogado));
+    }
+
     @GetMapping
     public ResponseEntity<Page<ChamadaListagemDTO>> listarChamadas(
             @RequestParam(required = false) StatusChamada status,
