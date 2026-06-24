@@ -1,0 +1,115 @@
+.cabecalho {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.titulo {
+  font-size: 1.75rem;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  color: var(--text);
+}
+
+.acoesCabecalho {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+}
+
+.acaoEditar {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.acaoVoltar {
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.abas {
+  display: flex;
+  gap: 0.5rem;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+
+.aba {
+  padding: 0.65rem 1.1rem;
+  border: none;
+  background: none;
+  color: var(--text-muted);
+  font-size: 0.9375rem;
+  font-weight: 600;
+  cursor: pointer;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  transition: color 0.15s ease, border-color 0.15s ease;
+}
+
+.aba:hover {
+  color: var(--text);
+}
+
+.abaAtiva {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-sm);
+  padding: 1.25rem;
+}
+
+.cardLargo {
+  grid-column: 1 / -1;
+}
+
+.cardTitulo {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--text);
+  margin-bottom: 0.85rem;
+}
+
+.lista {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.item {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.item dt {
+  font-size: 0.8125rem;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--text-muted);
+}
+
+.item dd {
+  color: var(--text);
+  font-size: 0.9375rem;
+}
+
+.endereco {
+  color: var(--text);
+  font-size: 0.9375rem;
+  line-height: 1.5;
+}

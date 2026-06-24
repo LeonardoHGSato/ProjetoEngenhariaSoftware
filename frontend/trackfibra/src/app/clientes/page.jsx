@@ -132,6 +132,12 @@ export default function ClientesPage() {
                       </td>
                       <td className={styles.acoes}>
                         <Link
+                          href={`/clientes/${c.id}`}
+                          className={styles.acaoEditar}
+                        >
+                          Detalhes
+                        </Link>
+                        <Link
                           href={`/clientes/${c.id}/editar`}
                           className={styles.acaoEditar}
                         >

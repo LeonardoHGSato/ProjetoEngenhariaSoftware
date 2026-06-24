@@ -151,6 +151,12 @@ export default function FuncionariosPage() {
                       </td>
                       <td className={styles.acoes}>
                         <Link
+                          href={`/funcionarios/${f.id}`}
+                          className={styles.acaoEditar}
+                        >
+                          Detalhes
+                        </Link>
+                        <Link
                           href={`/funcionarios/${f.id}/editar`}
                           className={styles.acaoEditar}
                         >
