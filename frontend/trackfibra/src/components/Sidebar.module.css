@@ -1,7 +1,7 @@
 .sidebar {
   display: flex;
   flex-direction: column;
-  width: 248px;
+  width: 272px;
   height: 100%;
   background: var(--surface);
   border-right: 1px solid var(--border);
@@ -22,17 +22,17 @@
 .nav {
   display: flex;
   flex-direction: column;
-  gap: 0.125rem;
+  gap: 0.25rem;
   flex: 1;
   padding: 1rem 0.75rem;
 }
 
 .item {
-  padding: 0.6rem 0.75rem;
+  padding: 0.72rem 0.85rem;
   border-radius: var(--radius-sm);
-  font-size: 0.925rem;
+  font-size: 0.95rem;
   font-weight: 500;
-  color: var(--text-muted);
+  color: #334155;
   transition: background 0.15s ease, color 0.15s ease;
 }
 
@@ -50,11 +50,11 @@
 
 .sair {
   margin: 0 0.75rem 1rem;
-  padding: 0.6rem 0.75rem;
+  padding: 0.72rem 0.85rem;
   border: 1px solid var(--border);
   border-radius: var(--radius-sm);
   background: transparent;
-  color: var(--text-muted);
+  color: #334155;
   font-size: 0.925rem;
   font-weight: 600;
   cursor: pointer;

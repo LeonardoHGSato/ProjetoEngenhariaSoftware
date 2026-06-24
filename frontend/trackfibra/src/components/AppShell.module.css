@@ -59,14 +59,20 @@
 
 .conteudo {
   flex: 1;
-  padding: 2rem 1.5rem;
+  width: 100%;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 2rem 2.5rem;
   background: var(--bg);
 }
 
-/* Desktop: a sidebar fica fixa no layout e o menu retrátil some. */
+/* Desktop: a sidebar fica fixa em toda a altura e o menu retrátil some. */
 @media (min-width: 768px) {
   .painel {
-    position: static;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    align-self: flex-start;
     transform: none;
     z-index: auto;
   }
