@@ -23,12 +23,27 @@ O sistema permite o controle completo das operações de campo de um provedor de
 
 ## Como executar
 
+### Stack completa (Docker)
+
+Para subir tudo — banco, backend e frontend — com um único comando, sem instalar
+Java ou Node na máquina:
+
+```bash
+docker compose up --build
+```
+
+O frontend fica em `http://localhost:3000` e o backend em `http://localhost:8080`.
+As portas, credenciais e a URL da API são configuráveis via `.env` (copie de `.env.example`).
+
+Para o dia a dia de desenvolvimento, é comum subir só o banco no Docker e rodar
+backend e frontend localmente (hot-reload e debug mais fáceis) — veja as seções abaixo.
+
 ### Banco de dados (Docker)
 
 O Postgres de desenvolvimento sobe via Docker Compose, sem precisar instalar o banco na máquina:
 
 ```bash
-docker compose up -d
+docker compose up -d postgres
 ```
 
 Isso cria um Postgres na porta `5432`, com banco/usuário/senha `trackfibra` e os dados
@@ -47,7 +62,7 @@ copie `.env.example` para `.env` e ajuste os valores antes de subir o compose.
 
 ```bash
 cd backend
-cp src/main/resources/application.properties.example src/main/resources/application.properties
+cp src/main/resources/application.properties.exemplo src/main/resources/application.properties
 ./mvnw spring-boot:run
 ```
 
