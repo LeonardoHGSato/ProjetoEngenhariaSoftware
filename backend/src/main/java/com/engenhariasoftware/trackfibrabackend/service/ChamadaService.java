@@ -67,6 +67,8 @@ public class ChamadaService {
         Endereco enderecoSnapshot;
         if (dto.endereco() != null) {
             enderecoSnapshot = dto.endereco().toEndereco();
+        } else if (cliente.getEndereco() == null) {
+            throw new ConflitoException("O cliente não possui endereço cadastrado.");
         } else {
             enderecoSnapshot = new Endereco(
                     cliente.getEndereco().getCep(),

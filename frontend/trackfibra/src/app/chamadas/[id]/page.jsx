@@ -2,13 +2,15 @@
 
 import { useCallback, useState } from "react";
 import Link from "next/link";
-import { useParams, useRouter } from "next/navigation";
+import { useParams } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import PrivateRoute from "@/components/PrivateRoute";
 import Loading from "@/components/Loading";
 import ErroEstado from "@/components/ErroEstado";
 import StatusBadge from "@/components/StatusBadge";
+import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
+import { ROLES } from "@/config/menu";
 import { useAsync } from "@/hooks/useAsync";
 import {
   buscarChamada,
@@ -55,6 +57,9 @@ function formatarEndereco(endereco) {
 // Mínimo de caracteres exigido no relato ao finalizar (alinhado ao backend).
 const RELATO_MIN = 10;
 
+// Mínimo de caracteres exigido no motivo ao cancelar (alinhado ao backend).
+const MOTIVO_MIN = 10;
+
 // "YYYY-MM-DDTHH:mm" no fuso local, para pré-preencher o input datetime-local.
 function agoraLocal() {
   const agora = new Date();
@@ -63,9 +68,14 @@ function agoraLocal() {
 }
 
 export default function DetalheChamadaPage() {
-  const router = useRouter();
   const { toast } = useToast();
+  const { user } = useAuth();
   const { id } = useParams();
+
+  // O técnico acessa esta página via "Minhas Chamadas" e não tem permissão
+  // para a listagem de supervisor (/chamadas), que redireciona ao /403.
+  const rotaVoltar =
+    user?.role === ROLES.tecnico ? "/minhas-chamadas" : "/chamadas";
 
   const carregarChamada = useCallback(() => buscarChamada(id), [id]);
   const {
@@ -116,7 +126,7 @@ export default function DetalheChamadaPage() {
     evento.preventDefault();
     setEnviando(true);
     try {
-      await cancelarChamada(id, { motivoCancelamento: motivo });
+      await cancelarChamada(id, { motivo });
       toast.success("Chamada cancelada.");
       setAcao(null);
       await recarregar();
@@ -128,7 +138,10 @@ export default function DetalheChamadaPage() {
   }
 
   const aberta = chamada?.status === "ABERTA";
+  // Apenas o supervisor pode cancelar (o backend restringe o endpoint a SUPERVISOR).
+  const podeCancelar = user?.role === ROLES.supervisor;
   const relatoValido = relato.trim().length >= RELATO_MIN;
+  const motivoValido = motivo.trim().length >= MOTIVO_MIN;
 
   return (
     <PrivateRoute>
@@ -140,7 +153,7 @@ export default function DetalheChamadaPage() {
             </h1>
             {chamada && <StatusBadge status={chamada.status} />}
           </div>
-          <Link href="/chamadas" className={styles.acaoVoltar}>
+          <Link href={rotaVoltar} className={styles.acaoVoltar}>
             Voltar
           </Link>
         </div>
@@ -163,13 +176,15 @@ export default function DetalheChamadaPage() {
                 >
                   Finalizar
                 </button>
-                <button
-                  type="button"
-                  className={styles.botaoCancelar}
-                  onClick={abrirCancelar}
-                >
-                  Cancelar
-                </button>
+                {podeCancelar && (
+                  <button
+                    type="button"
+                    className={styles.botaoCancelar}
+                    onClick={abrirCancelar}
+                  >
+                    Cancelar
+                  </button>
+                )}
               </div>
             )}
 
@@ -343,10 +358,18 @@ export default function DetalheChamadaPage() {
                   className={styles.textarea}
                   value={motivo}
                   onChange={(e) => setMotivo(e.target.value)}
+                  minLength={MOTIVO_MIN}
                   rows={4}
-                  placeholder="Informe o motivo do cancelamento."
+                  placeholder="Informe o motivo do cancelamento (mínimo 10 caracteres)."
                   required
                 />
+                <span
+                  className={`${styles.contador} ${
+                    motivoValido ? "" : styles.contadorInvalido
+                  }`}
+                >
+                  {motivo.trim().length}/{MOTIVO_MIN} caracteres
+                </span>
               </label>
               <div className={styles.modalAcoes}>
                 <button
@@ -360,7 +383,7 @@ export default function DetalheChamadaPage() {
                 <button
                   type="submit"
                   className={styles.botaoCancelarConfirmar}
-                  disabled={enviando}
+                  disabled={enviando || !motivoValido}
                 >
                   {enviando ? "Aguarde..." : "Cancelar chamada"}
                 </button>
