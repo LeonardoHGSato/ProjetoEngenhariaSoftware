@@ -9,8 +9,12 @@ import { useAuth } from "@/context/AuthContext";
 import { useToast } from "@/context/ToastContext";
 import { useAsync } from "@/hooks/useAsync";
 import { apenasDigitos, mascaraCpf, mascaraTelefone } from "@/lib/masks";
-import { meuPerfil, editarMeuPerfil } from "@/services/usuarios";
+import { meuPerfil, editarMeuPerfil, alterarSenha } from "@/services/usuarios";
 import styles from "./meu-perfil.module.css";
+
+// Força mínima da nova senha (espelha a validação do backend): no mínimo 8
+// caracteres, contendo letras e números.
+const SENHA_REGEX = /^(?=.*[A-Za-z])(?=.*\d).{8,}$/;
 
 export default function MeuPerfilPage() {
   const { toast } = useToast();
@@ -26,6 +30,20 @@ export default function MeuPerfilPage() {
   const [form, setForm] = useState({ nome: "", telefone: "" });
   const [erros, setErros] = useState({});
   const [enviando, setEnviando] = useState(false);
+
+  const [modalSenha, setModalSenha] = useState(false);
+  const [senha, setSenha] = useState({
+    senhaAtual: "",
+    novaSenha: "",
+    confirmar: "",
+  });
+  const [enviandoSenha, setEnviandoSenha] = useState(false);
+
+  const novaSenhaValida = SENHA_REGEX.test(senha.novaSenha);
+  const confirmaValida =
+    senha.confirmar.length > 0 && senha.confirmar === senha.novaSenha;
+  const senhaFormValido =
+    senha.senhaAtual.length > 0 && novaSenhaValida && confirmaValida;
 
   // Pré-preenche o formulário quando o perfil é carregado (ou recarregado).
   useEffect(() => {
@@ -63,6 +81,33 @@ export default function MeuPerfilPage() {
       // Erros já são exibidos via toast pelo interceptor de api.
     } finally {
       setEnviando(false);
+    }
+  }
+
+  function abrirModalSenha() {
+    setSenha({ senhaAtual: "", novaSenha: "", confirmar: "" });
+    setModalSenha(true);
+  }
+
+  function fecharModalSenha() {
+    if (!enviandoSenha) setModalSenha(false);
+  }
+
+  async function confirmarSenha(evento) {
+    evento.preventDefault();
+    setEnviandoSenha(true);
+    try {
+      await alterarSenha({
+        senhaAtual: senha.senhaAtual,
+        novaSenha: senha.novaSenha,
+      });
+      toast.success("Senha alterada.");
+      setModalSenha(false);
+    } catch {
+      // Erros (ex: senha atual incorreta) já são exibidos via toast pelo
+      // interceptor de api.
+    } finally {
+      setEnviandoSenha(false);
     }
   }
 
@@ -126,6 +171,20 @@ export default function MeuPerfilPage() {
               </div>
             </div>
 
+            {perfil.carroPlaca && (
+              <div className={styles.campo}>
+                <label className={styles.label} htmlFor="carro">
+                  Carro atribuído
+                </label>
+                <input
+                  id="carro"
+                  className={styles.input}
+                  value={perfil.carroPlaca}
+                  disabled
+                />
+              </div>
+            )}
+
             <div className={styles.campo}>
               <label className={styles.label} htmlFor="telefone">
                 Telefone
@@ -158,8 +217,102 @@ export default function MeuPerfilPage() {
               >
                 {enviando ? "Salvando..." : "Salvar alterações"}
               </button>
+              <button
+                type="button"
+                className={styles.botaoSenha}
+                onClick={abrirModalSenha}
+                disabled={enviando}
+              >
+                Alterar senha
+              </button>
             </div>
           </form>
+        )}
+
+        {modalSenha && (
+          <div className={styles.overlay} onClick={fecharModalSenha}>
+            <form
+              className={styles.modal}
+              onClick={(e) => e.stopPropagation()}
+              onSubmit={confirmarSenha}
+            >
+              <h2 className={styles.modalTitulo}>Alterar senha</h2>
+
+              <label className={styles.campo}>
+                <span className={styles.label}>Senha atual</span>
+                <input
+                  type="password"
+                  className={styles.input}
+                  value={senha.senhaAtual}
+                  onChange={(e) =>
+                    setSenha((s) => ({ ...s, senhaAtual: e.target.value }))
+                  }
+                  autoComplete="current-password"
+                  required
+                />
+              </label>
+
+              <label className={styles.campo}>
+                <span className={styles.label}>Nova senha</span>
+                <input
+                  type="password"
+                  className={styles.input}
+                  value={senha.novaSenha}
+                  onChange={(e) =>
+                    setSenha((s) => ({ ...s, novaSenha: e.target.value }))
+                  }
+                  autoComplete="new-password"
+                  required
+                />
+                <span
+                  className={`${styles.dica} ${
+                    senha.novaSenha.length === 0 || novaSenhaValida
+                      ? ""
+                      : styles.dicaInvalida
+                  }`}
+                >
+                  Mínimo 8 caracteres, com letras e números.
+                </span>
+              </label>
+
+              <label className={styles.campo}>
+                <span className={styles.label}>Confirmar nova senha</span>
+                <input
+                  type="password"
+                  className={styles.input}
+                  value={senha.confirmar}
+                  onChange={(e) =>
+                    setSenha((s) => ({ ...s, confirmar: e.target.value }))
+                  }
+                  autoComplete="new-password"
+                  required
+                />
+                {senha.confirmar.length > 0 && !confirmaValida && (
+                  <span className={styles.erroTexto}>
+                    As senhas não conferem.
+                  </span>
+                )}
+              </label>
+
+              <div className={styles.modalAcoes}>
+                <button
+                  type="button"
+                  className={styles.botaoSecundario}
+                  onClick={fecharModalSenha}
+                  disabled={enviandoSenha}
+                >
+                  Voltar
+                </button>
+                <button
+                  type="submit"
+                  className={styles.botaoSalvar}
+                  disabled={enviandoSenha || !senhaFormValido}
+                >
+                  {enviandoSenha ? "Aguarde..." : "Alterar senha"}
+                </button>
+              </div>
+            </form>
+          </div>
         )}
       </AppShell>
     </PrivateRoute>

@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 public interface ChamadaRepository extends JpaRepository<Chamada, Long>, JpaSpecificationExecutor<Chamada> {
 
@@ -16,6 +17,9 @@ public interface ChamadaRepository extends JpaRepository<Chamada, Long>, JpaSpec
             StatusChamada status,
             LocalDateTime inicio,
             LocalDateTime fim);
+
+    Optional<Chamada> findFirstByFuncionarioIdAndStatusOrderByDataHoraDesc(
+            Long funcionarioId, StatusChamada status);
 
     boolean existsByCarroIdAndStatus(Long carroId, StatusChamada status);
     boolean existsByClienteIdAndStatus(Long clienteId, StatusChamada status);

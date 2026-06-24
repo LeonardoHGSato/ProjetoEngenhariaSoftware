@@ -121,3 +121,70 @@
   opacity: 0.5;
   cursor: not-allowed;
 }
+
+.dica {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.dicaInvalida {
+  color: var(--danger);
+}
+
+.overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 1rem;
+  background: rgba(15, 23, 42, 0.5);
+}
+
+.modal {
+  width: 100%;
+  max-width: 460px;
+  background: var(--surface);
+  color: var(--text);
+  border-radius: var(--radius);
+  padding: 1.5rem;
+  box-shadow: var(--shadow);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.modalTitulo {
+  font-size: 1.125rem;
+  font-weight: 700;
+  color: var(--text);
+}
+
+.modalAcoes {
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.botaoSecundario {
+  padding: 0.65rem 1.2rem;
+  border-radius: var(--radius-sm);
+  border: 1px solid var(--border);
+  background: var(--surface);
+  color: var(--text);
+  font-weight: 600;
+  font-size: 0.9375rem;
+  cursor: pointer;
+  transition: border-color 0.15s ease, background 0.15s ease;
+}
+
+.botaoSecundario:hover:not(:disabled) {
+  border-color: var(--border-strong);
+  background: var(--surface-2);
+}
+
+.botaoSecundario:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
