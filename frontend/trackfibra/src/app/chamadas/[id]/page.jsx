@@ -136,6 +136,8 @@ export default function DetalheChamadaPage() {
   }
 
   const aberta = chamada?.status === "ABERTA";
+  // Apenas o supervisor pode cancelar (o backend restringe o endpoint a SUPERVISOR).
+  const podeCancelar = user?.role === ROLES.supervisor;
   const relatoValido = relato.trim().length >= RELATO_MIN;
 
   return (
@@ -171,13 +173,15 @@ export default function DetalheChamadaPage() {
                 >
                   Finalizar
                 </button>
-                <button
-                  type="button"
-                  className={styles.botaoCancelar}
-                  onClick={abrirCancelar}
-                >
-                  Cancelar
-                </button>
+                {podeCancelar && (
+                  <button
+                    type="button"
+                    className={styles.botaoCancelar}
+                    onClick={abrirCancelar}
+                  >
+                    Cancelar
+                  </button>
+                )}
               </div>
             )}
 
