@@ -1,10 +1,10 @@
 package com.engenhariasoftware.trackfibrabackend.repository;
 
-import com.engenhariasoftware.trackfibrabackend.model.Cliente;
+import com.engenhariasoftware.trackfibrabackend.model.ClienteModel;
 import org.springframework.data.jpa.domain.Specification;
 
 public class ClienteSpecification {
-    public static Specification<Cliente> comBusca(String busca){
+    public static Specification<ClienteModel> comBusca(String busca){
         return (root, query, cb) -> {
             if (busca == null || busca.isBlank()){
                 return null;

@@ -2,6 +2,7 @@
 
 import { useCallback, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import RoleRoute from "@/components/RoleRoute";
 import Loading from "@/components/Loading";
@@ -24,6 +25,7 @@ const STATUS_OPCOES = [
 ];
 
 export default function ChamadasPage() {
+  const router = useRouter();
   const [filtros, setFiltros] = useState({
     status: "",
     tipoServico: "",
@@ -154,7 +156,11 @@ export default function ChamadasPage() {
           <p className={styles.vazio}>Nenhuma chamada encontrada.</p>
         ) : (
           <>
-            <TabelaChamadas chamadas={chamadas} mostrarFuncionario />
+            <TabelaChamadas
+              chamadas={chamadas}
+              mostrarFuncionario
+              onRowClick={(chamada) => router.push(`/chamadas/${chamada.id}`)}
+            />
 
             {totalPaginas > 1 && (
               <div className={styles.paginacao}>
