@@ -40,3 +40,13 @@ export async function desativarCliente(id) {
   const { data } = await api.delete(`${BASE}/${id}`);
   return data;
 }
+
+// Histórico de chamadas do cliente. inicio e fim são obrigatórios no backend
+// (ISO LocalDateTime, ex: "2026-06-23T00:00"). Retorna o Page do Spring de
+// ChamadaHistoricoDTO: { content, totalPages, number, first, last, ... }.
+export async function historicoCliente(id, { inicio, fim, page = 0, size = 10 }) {
+  const { data } = await api.get(`${BASE}/${id}/historico`, {
+    params: { inicio, fim, page, size },
+  });
+  return data;
+}
