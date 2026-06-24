@@ -1,6 +1,7 @@
 "use client";
 
 import { useCallback, useState } from "react";
+import { useRouter } from "next/navigation";
 import AppShell from "@/components/AppShell";
 import RoleRoute from "@/components/RoleRoute";
 import Loading from "@/components/Loading";
@@ -22,6 +23,7 @@ const CHIPS = [
 ];
 
 export default function MinhasChamadasPage() {
+  const router = useRouter();
   const [status, setStatus] = useState("");
   const [pagina, setPagina] = useState(0);
 
@@ -73,7 +75,11 @@ export default function MinhasChamadasPage() {
           <p className={styles.vazio}>Nenhuma chamada encontrada.</p>
         ) : (
           <>
-            <TabelaChamadas chamadas={chamadas} mostrarFuncionario={false} />
+            <TabelaChamadas
+              chamadas={chamadas}
+              mostrarFuncionario={false}
+              onRowClick={(chamada) => router.push(`/chamadas/${chamada.id}`)}
+            />
 
             {totalPaginas > 1 && (
               <div className={styles.paginacao}>

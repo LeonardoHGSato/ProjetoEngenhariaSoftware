@@ -10,18 +10,17 @@ import org.springframework.stereotype.Component;
 @Component
 public class ChamadaStatusListener {
     private static ChamadaStatusLogRepository repository;
-
     public static void setRepository(ChamadaStatusLogRepository repo){
         repository = repo;
     }
 
     @PostPersist
-    public void logCriacao(Chamada chamada) {
+    public void logCriacao(Chamada chamada){
         repository.save(new ChamadaStatusLog(chamada));
     }
 
     @PostUpdate
-    public void logAtualizacao(Chamada chamada) {
+    public void logAtualizacao(Chamada chamada){
         repository.save(new ChamadaStatusLog(chamada));
     }
 }

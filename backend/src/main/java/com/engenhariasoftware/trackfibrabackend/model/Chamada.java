@@ -2,6 +2,7 @@ package com.engenhariasoftware.trackfibrabackend.model;
 
 import com.engenhariasoftware.trackfibrabackend.enums.StatusChamada;
 import com.engenhariasoftware.trackfibrabackend.enums.TipoServico;
+import com.engenhariasoftware.trackfibrabackend.listener.ChamadaStatusListener;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -14,6 +15,8 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @Setter
 @Getter
+
+@EntityListeners(ChamadaStatusListener.class)
 @Entity
 @Table(name = "chamadas")
 public class Chamada {
@@ -24,7 +27,7 @@ public class Chamada {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "cliente_id", nullable = false)
-    private Cliente cliente;
+    private ClienteModel cliente;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "funcionario_id", nullable = false)

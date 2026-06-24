@@ -23,15 +23,15 @@
 
 .mensagem {
   font-size: 0.875rem;
-  color: #555555;
+  color: var(--text-muted);
   max-width: 28rem;
 }
 
 .botao {
   padding: 0.5rem 1.25rem;
-  border: 1px solid #171717;
+  border: 1px solid var(--primary);
   border-radius: 6px;
-  background: #171717;
+  background: var(--primary);
   color: #ffffff;
   font-size: 0.875rem;
   cursor: pointer;
@@ -39,16 +39,4 @@
 
 .botao:hover {
   opacity: 0.85;
-}
-
-@media (prefers-color-scheme: dark) {
-  .mensagem {
-    color: #aaaaaa;
-  }
-
-  .botao {
-    border-color: #ededed;
-    background: #ededed;
-    color: #0a0a0a;
-  }
 }

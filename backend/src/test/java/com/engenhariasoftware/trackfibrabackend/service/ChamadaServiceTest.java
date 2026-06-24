@@ -51,7 +51,7 @@ class ChamadaServiceTest {
     private ChamadaService chamadaService;
 
     // Variáveis que vamos usar em todos os testes
-    private Cliente cliente;
+    private ClienteModel cliente;
     private FuncionarioModel funcionario;
     private Carro carro;
     private ChamadaRequestDTO requestDTO;
@@ -60,7 +60,7 @@ class ChamadaServiceTest {
     @BeforeEach
     void setup() {
         // Prepara os dados falsos antes de cada teste rodar
-        cliente = new Cliente();
+        cliente = new ClienteModel();
         cliente.setId(1L);
         cliente.setNome("João Silva");
         cliente.setEndereco(new Endereco("12345678", "Rua A", "10", null, "Centro", "Cidade", "PR"));

@@ -19,6 +19,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
+import org.springframework.security.access.AccessDeniedException;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -42,7 +43,7 @@ public class ChamadaService {
 
     @Transactional
     public ChamadaResponseDTO abrirChamada(ChamadaRequestDTO dto){
-        Cliente cliente = clienteRepository.findById(dto.clienteId())
+        ClienteModel cliente = clienteRepository.findById(dto.clienteId())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado."));
         FuncionarioModel funcionario = funcionarioRepository.findById(dto.funcionarioId())
                 .orElseThrow(() -> new RecursoNaoEncontradoException("Funcionário não encontrado."));
@@ -99,6 +100,16 @@ public class ChamadaService {
 
         Chamada chamadaSalva = chamadaRepository.save(chamada);
         return new ChamadaResponseDTO(chamadaSalva);
+    }
+
+    public ChamadaResponseDTO buscarPorId(Long id, FuncionarioModel usuarioLogado){
+        Chamada chamada = chamadaRepository.findById(id).orElseThrow(() -> new RecursoNaoEncontradoException("Chamada não encontrada."));
+
+        if(usuarioLogado.getPerfilFuncionario() == PerfilFuncionario.TECNICO && !chamada.getFuncionario().getId().equals(usuarioLogado.getId())) {
+            throw new AccessDeniedException("Acesso negado.");
+        }
+
+        return new ChamadaResponseDTO(chamada);
     }
 
     public Page<ChamadaListagemDTO> listarChamadas(
