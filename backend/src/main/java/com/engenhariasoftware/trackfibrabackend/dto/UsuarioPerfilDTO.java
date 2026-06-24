@@ -11,9 +11,10 @@ public record UsuarioPerfilDTO(
         String cpf,
         String numeroTelefone,
         StatusFuncionario statusFuncionario,
-        PerfilFuncionario perfilFuncionario
+        PerfilFuncionario perfilFuncionario,
+        String carroPlaca
 ) {
-    public UsuarioPerfilDTO(FuncionarioModel f) {
+    public UsuarioPerfilDTO(FuncionarioModel f, String carroPlaca) {
         this(
                 f.getId(),
                 f.getNome(),
@@ -21,7 +22,8 @@ public record UsuarioPerfilDTO(
                 f.getCpf(),
                 f.getNumeroTelefone(),
                 f.getStatusFuncionario(),
-                f.getPerfilFuncionario()
+                f.getPerfilFuncionario(),
+                carroPlaca
         );
     }
 }
