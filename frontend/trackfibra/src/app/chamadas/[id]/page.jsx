@@ -52,6 +52,9 @@ function formatarEndereco(endereco) {
   return partes.join(" • ") || "—";
 }
 
+// Mínimo de caracteres exigido no relato ao finalizar (alinhado ao backend).
+const RELATO_MIN = 10;
+
 // "YYYY-MM-DDTHH:mm" no fuso local, para pré-preencher o input datetime-local.
 function agoraLocal() {
   const agora = new Date();
@@ -125,6 +128,7 @@ export default function DetalheChamadaPage() {
   }
 
   const aberta = chamada?.status === "ABERTA";
+  const relatoValido = relato.trim().length >= RELATO_MIN;
 
   return (
     <PrivateRoute>
@@ -291,11 +295,18 @@ export default function DetalheChamadaPage() {
                   className={styles.textarea}
                   value={relato}
                   onChange={(e) => setRelato(e.target.value)}
-                  minLength={10}
+                  minLength={RELATO_MIN}
                   rows={4}
                   placeholder="Descreva o que foi feito (mínimo 10 caracteres)."
                   required
                 />
+                <span
+                  className={`${styles.contador} ${
+                    relatoValido ? "" : styles.contadorInvalido
+                  }`}
+                >
+                  {relato.trim().length}/{RELATO_MIN} caracteres
+                </span>
               </label>
               <div className={styles.modalAcoes}>
                 <button
@@ -309,7 +320,7 @@ export default function DetalheChamadaPage() {
                 <button
                   type="submit"
                   className={styles.botaoFinalizar}
-                  disabled={enviando}
+                  disabled={enviando || !relatoValido}
                 >
                   {enviando ? "Aguarde..." : "Finalizar"}
                 </button>
