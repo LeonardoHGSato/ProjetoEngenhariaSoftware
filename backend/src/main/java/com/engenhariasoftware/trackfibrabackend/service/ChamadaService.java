@@ -181,4 +181,18 @@ public class ChamadaService {
 
         return new ChamadaResponseDTO(chamadaRepository.save(chamada));
     }
+
+    public Page<ChamadaHistoricoDTO> historicoCliente(Long clienteId, LocalDateTime inicio, LocalDateTime fim, Pageable pageable) {
+        clienteRepository.findById(clienteId).orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado."));
+
+        return chamadaRepository.findByClienteIdAndDataHoraBetween(clienteId, inicio, fim, pageable)
+                .map(ChamadaHistoricoDTO::new);
+    }
+
+    public Page<ChamadaHistoricoDTO> historicoFuncionario(Long funcionarioId, LocalDateTime inicio, LocalDateTime fim, Pageable pageable) {
+        funcionarioRepository.findById(funcionarioId).orElseThrow(() -> new RecursoNaoEncontradoException("Funcionário não encontrado."));
+
+        return chamadaRepository.findByFuncionarioIdAndDataHoraBetween(funcionarioId, inicio, fim, pageable)
+                .map(ChamadaHistoricoDTO::new);
+    }
 }

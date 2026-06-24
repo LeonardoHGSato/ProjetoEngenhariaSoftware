@@ -2,6 +2,8 @@ package com.engenhariasoftware.trackfibrabackend.repository;
 
 import com.engenhariasoftware.trackfibrabackend.enums.StatusChamada;
 import com.engenhariasoftware.trackfibrabackend.model.Chamada;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.JpaSpecificationExecutor;
 import java.time.LocalDateTime;
@@ -18,4 +20,8 @@ public interface ChamadaRepository extends JpaRepository<Chamada, Long>, JpaSpec
     boolean existsByCarroIdAndStatus(Long carroId, StatusChamada status);
     boolean existsByClienteIdAndStatus(Long clienteId, StatusChamada status);
     boolean existsByFuncionarioIdAndStatus(Long funcionarioId, StatusChamada status);
+
+    Page<Chamada> findByClienteIdAndDataHoraBetween(Long clienteId, LocalDateTime inicio, LocalDateTime fim, Pageable pageable);
+
+    Page<Chamada> findByFuncionarioIdAndDataHoraBetween(Long funcionarioId, LocalDateTime inicio, LocalDateTime fim, Pageable pageable);
 }

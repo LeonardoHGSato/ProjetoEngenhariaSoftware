@@ -1,17 +1,18 @@
 package com.engenhariasoftware.trackfibrabackend.controller;
 
-import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioEdicaoDTO;
-import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioListagemDTO;
-import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioRequestDTO;
-import com.engenhariasoftware.trackfibrabackend.dto.FuncionarioResponseDTO;
+import com.engenhariasoftware.trackfibrabackend.dto.*;
 import com.engenhariasoftware.trackfibrabackend.enums.StatusFuncionario;
+import com.engenhariasoftware.trackfibrabackend.service.ChamadaService;
 import com.engenhariasoftware.trackfibrabackend.service.FuncionarioService;
 import jakarta.validation.Valid;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDateTime;
 
 @RestController
 @RequestMapping("/api/v1/funcionarios")
@@ -19,11 +20,13 @@ public class FuncionarioController {
 
 //    Declaracao do atributo para que o construtor seja válido
     private final FuncionarioService funcionarioService;
+    private final ChamadaService chamadaService;
 
 //    Construtor com injecao de dependencia (igual o construtor de funcionario service usa um FuncionarioRepository como parâmetro)
-    public FuncionarioController(FuncionarioService funcionarioService){
-        this.funcionarioService = funcionarioService;
-    }
+public FuncionarioController(FuncionarioService funcionarioService, ChamadaService chamadaService) {
+    this.funcionarioService = funcionarioService;
+    this.chamadaService = chamadaService;
+}
 
 //    Annotation define que esse metodo responde requisições POST
     @PostMapping
@@ -71,5 +74,14 @@ public class FuncionarioController {
         FuncionarioResponseDTO desativacaoDTO = funcionarioService.desativarFuncionario(id);
 //        Retorna 200 OK com o status como INATIVO
         return ResponseEntity.ok().body(desativacaoDTO);
+    }
+
+    @GetMapping("/{id}/historico")
+    public ResponseEntity<Page<ChamadaHistoricoDTO>> historicoFuncionario(
+            @PathVariable Long id,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime inicio,
+            @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime fim,
+            Pageable pageable) {
+        return ResponseEntity.ok(chamadaService.historicoFuncionario(id, inicio, fim, pageable));
     }
 }
