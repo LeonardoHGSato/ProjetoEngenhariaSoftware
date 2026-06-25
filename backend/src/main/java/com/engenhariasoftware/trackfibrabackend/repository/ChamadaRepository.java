@@ -18,6 +18,12 @@ public interface ChamadaRepository extends JpaRepository<Chamada, Long>, JpaSpec
             LocalDateTime inicio,
             LocalDateTime fim);
 
+    List<Chamada> findByCarroIdAndStatusAndDataHoraBetween(
+            Long carroId,
+            StatusChamada status,
+            LocalDateTime inicio,
+            LocalDateTime fim);
+
     Optional<Chamada> findFirstByFuncionarioIdAndStatusOrderByDataHoraDesc(
             Long funcionarioId, StatusChamada status);
 
