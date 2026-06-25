@@ -147,7 +147,9 @@ Há exemplos para usar como molde:
 
 - `TrackFibraBackEndApplicationTests` — teste de carga de contexto (sobe o `ApplicationContext`).
 - `ExemploTest` — exemplo mínimo que valida a infraestrutura de testes (estende `BaseTest`).
-- `service/ChamadaServiceTest` — teste unitário de regra de negócio com Mockito, sem subir o Spring.
+- `service/ChamadaServiceTest` — testes unitários de regra de negócio com Mockito, sem subir o
+  Spring. Cobrem duas operações do sistema — **abrir chamada** e **finalizar chamada** —
+  incluindo os caminhos de erro (conflito de horário, carro indisponível, acesso negado, etc.).
 
 ```bash
 cd backend
