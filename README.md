@@ -131,16 +131,23 @@ npm run test:watch # modo watch durante o desenvolvimento
 ```
 
 Para criar um novo teste, adicione um arquivo `*.test.jsx` ao lado do componente
-(ou em `__tests__/`) e use o teste de exemplo como molde: renderize com `render(...)`
-do Testing Library e faça as asserções com os matchers de `@testing-library/jest-dom`.
+(ou em `__tests__/`) e use o teste de exemplo `Loading.test.jsx`
+(`src/components/__tests__/`) como molde: renderize com `render(...)` do Testing Library
+e faça as asserções com os matchers de `@testing-library/jest-dom`.
 
 ### Backend
 
 Os testes usam **JUnit 5** + **Mockito** (via `spring-boot-starter-test`) e rodam contra
 um ambiente isolado: o perfil `test` aponta para um **H2 em memória** (recriado a cada
-execução e descartado no fim), sem tocar no banco de desenvolvimento. As classes de teste
-estendem `BaseTest`, que já ativa esse perfil. O CI do backend executa `./mvnw clean verify`,
-ou seja, a suíte roda por completo a cada push.
+execução e descartado no fim), sem tocar no banco de desenvolvimento. As classes que
+precisam do contexto do Spring estendem `BaseTest`, que já ativa esse perfil. O CI do
+backend executa `./mvnw clean verify`, ou seja, a suíte roda por completo a cada push.
+
+Há exemplos para usar como molde:
+
+- `TrackFibraBackEndApplicationTests` — teste de carga de contexto (sobe o `ApplicationContext`).
+- `ExemploTest` — exemplo mínimo que valida a infraestrutura de testes (estende `BaseTest`).
+- `service/ChamadaServiceTest` — teste unitário de regra de negócio com Mockito, sem subir o Spring.
 
 ```bash
 cd backend
