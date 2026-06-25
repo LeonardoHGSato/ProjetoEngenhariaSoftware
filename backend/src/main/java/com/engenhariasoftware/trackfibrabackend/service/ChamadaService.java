@@ -52,7 +52,7 @@ public class ChamadaService {
         if (!funcionario.isEnabled()) {
             throw new ConflitoException("O funcionário selecionado está inativo.");
         }
-        if (carro.getStatus() != StatusCarro.DISPONIVEL) {
+        if (carro.getStatus() == StatusCarro.MANUTENCAO || carro.getStatus() == StatusCarro.DESATIVADO) {
             throw new ConflitoException("O carro selecionado não está disponível no momento.");
         }
 
@@ -64,6 +64,13 @@ public class ChamadaService {
 
         if (!conflitos.isEmpty()) {
             throw new ConflitoException("O funcionário já possui uma chamada aberta neste horário.");
+        }
+
+        List<Chamada> conflitosCarro = chamadaRepository.findByCarroIdAndStatusAndDataHoraBetween(
+                carro.getId(), StatusChamada.ABERTA, inicioJanela, fimJanela);
+
+        if (!conflitosCarro.isEmpty()) {
+            throw new ConflitoException("O carro já está alocado para outra chamada neste horário.");
         }
 
         Endereco enderecoSnapshot;
@@ -95,9 +102,6 @@ public class ChamadaService {
                 .filter(strategy -> strategy.getTipoSuportado() == dto.tipoServico())
                 .findFirst()
                 .ifPresent(strategy -> strategy.executar(chamada));
-
-        carro.setStatus(StatusCarro.EM_USO);
-        carroRepository.save(carro);
 
         Chamada chamadaSalva = chamadaRepository.save(chamada);
         chamadaStatusLogRepository.save(new ChamadaStatusLog(chamadaSalva));
@@ -157,10 +161,6 @@ public class ChamadaService {
         chamada.setRelato(dto.relato());
         chamada.setStatus(StatusChamada.CONCLUIDA);
 
-        Carro carro = chamada.getCarro();
-        carro.setStatus(StatusCarro.DISPONIVEL);
-        carroRepository.save(carro);
-
         Chamada chamadaSalva = chamadaRepository.save(chamada);
         chamadaStatusLogRepository.save(new ChamadaStatusLog(chamadaSalva));
         return new ChamadaResponseDTO(chamadaSalva);
@@ -181,10 +181,6 @@ public class ChamadaService {
 
         chamada.setStatus(StatusChamada.CANCELADA);
         chamada.setMotivoCancelamento(dto.motivo());
-
-        Carro carro = chamada.getCarro();
-        carro.setStatus(StatusCarro.DISPONIVEL);
-        carroRepository.save(carro);
 
         Chamada chamadaSalva = chamadaRepository.save(chamada);
         chamadaStatusLogRepository.save(new ChamadaStatusLog(chamadaSalva));
