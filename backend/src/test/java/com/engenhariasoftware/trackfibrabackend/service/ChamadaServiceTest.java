@@ -10,6 +10,7 @@ import com.engenhariasoftware.trackfibrabackend.exception.ConflitoException;
 import com.engenhariasoftware.trackfibrabackend.model.*;
 import com.engenhariasoftware.trackfibrabackend.repository.CarroRepository;
 import com.engenhariasoftware.trackfibrabackend.repository.ChamadaRepository;
+import com.engenhariasoftware.trackfibrabackend.repository.ChamadaStatusLogRepository;
 import com.engenhariasoftware.trackfibrabackend.repository.ClienteRepository;
 import com.engenhariasoftware.trackfibrabackend.repository.FuncionarioRepository;
 import com.engenhariasoftware.trackfibrabackend.service.strategy.TipoChamadaStrategy;
@@ -42,6 +43,8 @@ class ChamadaServiceTest {
     private FuncionarioRepository funcionarioRepository;
     @Mock
     private CarroRepository carroRepository;
+    @Mock
+    private ChamadaStatusLogRepository chamadaStatusLogRepository;
     @Mock
     private TipoChamadaStrategy strategyMock;
 
@@ -80,7 +83,7 @@ class ChamadaServiceTest {
 
         // Como o Service espera uma lista de strategies, nós simulamos isso aqui no construtor
         chamadaService = new ChamadaService(
-                chamadaRepository, clienteRepository, funcionarioRepository, carroRepository, List.of(strategyMock)
+                chamadaRepository, clienteRepository, funcionarioRepository, carroRepository, chamadaStatusLogRepository, List.of(strategyMock)
         );
 
         chamada = new Chamada();

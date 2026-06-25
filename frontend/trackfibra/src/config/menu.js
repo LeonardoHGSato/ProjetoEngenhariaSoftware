@@ -36,11 +36,6 @@ export const ITENS_MENU = [
     roles: [ROLES.supervisor],
   },
   {
-    label: "Tipos de Serviço",
-    href: "/tipos-servico",
-    roles: [ROLES.supervisor],
-  },
-  {
     label: "Meu Perfil",
     href: "/meu-perfil",
     roles: [ROLES.supervisor, ROLES.tecnico],
