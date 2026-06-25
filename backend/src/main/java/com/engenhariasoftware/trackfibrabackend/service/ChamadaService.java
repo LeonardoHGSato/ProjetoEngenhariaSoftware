@@ -28,13 +28,15 @@ public class ChamadaService {
     private final ClienteRepository clienteRepository;
     private final FuncionarioRepository funcionarioRepository;
     private final CarroRepository carroRepository;
+    private final ChamadaStatusLogRepository chamadaStatusLogRepository;
     private final List<TipoChamadaStrategy> strategies;
 
-    public ChamadaService(ChamadaRepository chamadaRepository, ClienteRepository clienteRepository, FuncionarioRepository funcionarioRepository, CarroRepository carroRepository, List<TipoChamadaStrategy> strategies) {
+    public ChamadaService(ChamadaRepository chamadaRepository, ClienteRepository clienteRepository, FuncionarioRepository funcionarioRepository, CarroRepository carroRepository, ChamadaStatusLogRepository chamadaStatusLogRepository, List<TipoChamadaStrategy> strategies) {
         this.chamadaRepository = chamadaRepository;
         this.clienteRepository = clienteRepository;
         this.funcionarioRepository = funcionarioRepository;
         this.carroRepository = carroRepository;
+        this.chamadaStatusLogRepository = chamadaStatusLogRepository;
         this.strategies = strategies;
     }
 
@@ -98,6 +100,7 @@ public class ChamadaService {
         carroRepository.save(carro);
 
         Chamada chamadaSalva = chamadaRepository.save(chamada);
+        chamadaStatusLogRepository.save(new ChamadaStatusLog(chamadaSalva));
         return new ChamadaResponseDTO(chamadaSalva);
     }
 
@@ -158,7 +161,9 @@ public class ChamadaService {
         carro.setStatus(StatusCarro.DISPONIVEL);
         carroRepository.save(carro);
 
-        return new ChamadaResponseDTO(chamadaRepository.save(chamada));
+        Chamada chamadaSalva = chamadaRepository.save(chamada);
+        chamadaStatusLogRepository.save(new ChamadaStatusLog(chamadaSalva));
+        return new ChamadaResponseDTO(chamadaSalva);
     }
 
     @Transactional
@@ -181,7 +186,9 @@ public class ChamadaService {
         carro.setStatus(StatusCarro.DISPONIVEL);
         carroRepository.save(carro);
 
-        return new ChamadaResponseDTO(chamadaRepository.save(chamada));
+        Chamada chamadaSalva = chamadaRepository.save(chamada);
+        chamadaStatusLogRepository.save(new ChamadaStatusLog(chamadaSalva));
+        return new ChamadaResponseDTO(chamadaSalva);
     }
 
     public Page<ChamadaHistoricoDTO> historicoCliente(Long clienteId, LocalDateTime inicio, LocalDateTime fim, Pageable pageable) {

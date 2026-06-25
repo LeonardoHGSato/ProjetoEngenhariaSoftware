@@ -2,7 +2,6 @@ package com.engenhariasoftware.trackfibrabackend.model;
 
 import com.engenhariasoftware.trackfibrabackend.enums.StatusChamada;
 import com.engenhariasoftware.trackfibrabackend.enums.TipoServico;
-import com.engenhariasoftware.trackfibrabackend.listener.ChamadaStatusListener;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,7 +15,6 @@ import java.time.LocalDateTime;
 @Setter
 @Getter
 
-@EntityListeners(ChamadaStatusListener.class)
 @Entity
 @Table(name = "chamadas")
 public class Chamada {
