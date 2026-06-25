@@ -11,7 +11,7 @@ O sistema permite o controle completo das operações de campo de um provedor de
 - **Perfil de funcionário** — cadastro e visualização de dados de cada técnico
 - **Veículo** — associação de cada funcionário ao seu respectivo carro
 - **Chamadas de serviço** — criação de chamadas pelo supervisor, atribuídas a funcionários
-- **Tipos de chamada:** instalação, manutenção e corte
+- **Tipos de chamada:** instalação, manutenção e retirada de equipamento
 - **Histórico** — registro completo das chamadas realizadas por funcionário, com data, hora e endereço
 
 ## Tecnologias
