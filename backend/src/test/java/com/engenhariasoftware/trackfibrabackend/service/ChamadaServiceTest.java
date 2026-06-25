@@ -104,6 +104,8 @@ class ChamadaServiceTest {
         when(carroRepository.findById(1L)).thenReturn(Optional.of(carro));
         when(chamadaRepository.findByFuncionarioIdAndStatusAndDataHoraBetween(any(), any(), any(), any()))
                 .thenReturn(Collections.emptyList()); // Retorna lista vazia (sem conflitos)
+        when(chamadaRepository.findByCarroIdAndStatusAndDataHoraBetween(any(), any(), any(), any()))
+                .thenReturn(Collections.emptyList()); // Carro sem conflito de horário
 
         when(strategyMock.getTipoSuportado()).thenReturn(TipoServico.INSTALACAO);
 
@@ -122,7 +124,7 @@ class ChamadaServiceTest {
 
         assertNotNull(response);
         assertEquals(100L, response.id());
-        assertEquals(StatusCarro.EM_USO, carro.getStatus()); // Verifica a atualização atômica
+        assertEquals(StatusCarro.DISPONIVEL, carro.getStatus()); // Status do carro não é alterado ao abrir
         verify(strategyMock, times(1)).executar(any()); // Verifica se o Strategy foi chamado
     }
 
@@ -148,7 +150,7 @@ class ChamadaServiceTest {
     @Test
     @DisplayName("Deve falhar quando carro selecionado não está disponível")
     void deveFalharQuandoCarroIndisponivel() {
-        carro.setStatus(StatusCarro.EM_USO); // Força o erro
+        carro.setStatus(StatusCarro.MANUTENCAO); // Carro fora de operação não pode ser alocado
 
         when(clienteRepository.findById(1L)).thenReturn(Optional.of(cliente));
         when(funcionarioRepository.findById(1L)).thenReturn(Optional.of(funcionario));
@@ -229,9 +231,9 @@ class ChamadaServiceTest {
     }
 
     @Test
-    @DisplayName("Deve liberar o carro após finalizar a chamada")
-    void deveLiberarCarroAposFinalizar() {
-        carro.setStatus(StatusCarro.EM_USO);
+    @DisplayName("Não deve alterar o status do carro ao finalizar a chamada")
+    void naoDeveAlterarStatusDoCarroAoFinalizar() {
+        carro.setStatus(StatusCarro.DISPONIVEL);
         ChamadaFinalizarDTO dto = new ChamadaFinalizarDTO("Serviço realizado com sucesso.", LocalDateTime.now());
 
         when(chamadaRepository.findById(10L)).thenReturn(Optional.of(chamada));
@@ -241,7 +243,7 @@ class ChamadaServiceTest {
         chamadaService.finalizarChamada(10L, dto, funcionario);
 
         assertEquals(StatusCarro.DISPONIVEL, carro.getStatus());
-        verify(carroRepository, times(1)).save(carro);
+        verify(carroRepository, never()).save(any());
     }
 
     @Test
